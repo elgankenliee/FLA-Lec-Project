@@ -75,9 +75,10 @@ public class Main extends Application {
 
 	// Sprite paths for enemy animations
 	private final String enemyIdleSpritePath = "./assets/sprite/boss/boss_idle.png";
+	private final String enemySpinSpritePath = "./assets/sprite/boss/boss_spin.png";
 
 	// Load enemy sprite images
-	private final Image[] enemySpriteImages = { new Image(enemyIdleSpritePath) };
+	private final Image[] enemySpriteImages = { new Image(enemyIdleSpritePath), new Image(enemySpinSpritePath) };
 
 	// Sprite sheet configuration
 	private static final int SPRITE_COLUMNS = 4;
@@ -95,9 +96,9 @@ public class Main extends Application {
 
 	// Movement properties
 	private double currentSpeedX = 0; // Current horizontal speed
-	private final double maxSpeed = 8; // Maximum speed
+	private final double maxSpeed = 12; // Maximum speed
 	private final double acceleration = 20; // Speed increase rate (per second)
-	private final double deceleration = 15; // Speed decrease rate
+	private final double deceleration = 30; // Speed decrease rate
 
 	// Jump and gravity mechanics
 	private double verticalVelocity = 0; // Current vertical velocity
@@ -132,6 +133,10 @@ public class Main extends Application {
 	// Player movement boundaries
 	private final double minX = 300; // Minimum X position (left boundary)
 	private final double maxX = 1300; // Maximum X position (right boundary)
+
+	private String bgMusicPath = "../assets/audio/song/tokyobluesloop.mp3"; // Replace with your file path
+	private Media bgMusicMedia = new Media(getClass().getResource(bgMusicPath).toExternalForm());
+	private MediaPlayer backgroundMusic = new MediaPlayer(bgMusicMedia);
 
 	@Override
 	public void start(Stage stage) {
@@ -182,6 +187,7 @@ public class Main extends Application {
 		Media media = new Media(getClass().getResource(bgPath).toExternalForm());
 		MediaPlayer mediaPlayer = new MediaPlayer(media);
 		mediaView = new MediaView(mediaPlayer);
+		backgroundMusic.setCycleCount(MediaPlayer.INDEFINITE);
 
 		// Set the size of the MediaView
 		mediaView.setFitWidth(gameScene.getWidth());
@@ -212,6 +218,7 @@ public class Main extends Application {
 		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Loop the video
 
 		mediaPlayer.play(); // Start playing the video
+		backgroundMusic.play();
 
 		initializeAnimations();
 		window.setScene(gameScene);
@@ -256,14 +263,14 @@ public class Main extends Application {
 	}
 
 	private Timeline createWalkAnimation(int[] walkFrame) {
-		return new Timeline(new KeyFrame(Duration.millis(70), event -> {
+		return new Timeline(new KeyFrame(Duration.millis(50), event -> {
 			walkFrame[0] = (walkFrame[0] + 1) % 8;
 		}));
 	}
 
 	private Timeline createAttackAnimation(int[] attackFrame) {
 		final int ATTACK_FRAMES = 8;
-		return new Timeline(new KeyFrame(Duration.millis(18), event -> {
+		return new Timeline(new KeyFrame(Duration.millis(23), event -> {
 			if (isAttacking[0]) {
 
 				attackFrame[0]++;
@@ -274,7 +281,10 @@ public class Main extends Application {
 	private Timeline createCrouchAnimation(int[] crouchFrame) {
 		final int CROUCH_FRAMES = 2;
 		return new Timeline(new KeyFrame(Duration.millis(150), event -> {
-			crouchFrame[0] = (crouchFrame[0] + 1) % CROUCH_FRAMES;
+			if (!isCrouching) {
+				crouchFrame[0] = 2;
+			} else
+				crouchFrame[0] = (crouchFrame[0] + 1) % CROUCH_FRAMES;
 		}));
 	}
 
@@ -293,6 +303,9 @@ public class Main extends Application {
 			Timeline crouchAnimation, Timeline enemyIdleAnimation) {
 		playerGC.clearRect(0, 0, 2000, 2000);
 		enemyGC.clearRect(0, 0, 2000, 2000);
+
+//		System.out.println(currentSpeedX);
+//		System.out.println(acceleration);
 
 //		drawGuideLine(playerCanvas, playerGC, playerCanvas.getHeight()); // For player
 //		drawGuideLine(enemyCanvas, enemyGC, playerCanvas.getHeight()); // For enemy
@@ -316,15 +329,18 @@ public class Main extends Application {
 	private void handlePlayerMovement() {
 		// Update current speed based on key presses
 		if (pressedKeys.contains(KeyCode.D) && player.getX() < maxX) {
-			currentSpeedX += acceleration * 0.016;
+			currentSpeedX += acceleration * 0.03;
 			isWalking = true;// Increase speed
 		} else if (pressedKeys.contains(KeyCode.A) && player.getX() > minX) {
 			currentSpeedX -= acceleration * 0.016;
 			isWalking = true;// Decrease speed
 		} else {
 			isWalking = false;
+			if (currentSpeedX < 0.7 && currentSpeedX > -0.7) {
+				currentSpeedX = 0;
+			}
 			// Apply friction when no keys are pressed
-			if (currentSpeedX > 0) {
+			else if (currentSpeedX > 0) {
 				currentSpeedX -= deceleration * 0.016; // Slow down
 			} else if (currentSpeedX < 0) {
 				currentSpeedX += deceleration * 0.016; // Slow down
@@ -391,7 +407,6 @@ public class Main extends Application {
 
 		// Restore the state of the GraphicsContext
 		enemyGC.restore();
-
 	}
 
 	private void handlePlayerAnimations(int[] idleFrame, int[] walkFrame, int[] attackFrame, int[] crouchFrame,
