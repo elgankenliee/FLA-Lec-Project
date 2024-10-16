@@ -16,6 +16,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -28,18 +29,9 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-class GameBackground {
-	double x = 0; // Player's x position
-	double y = 580; // Player's y position
-
-	void move(double dx, double dy) {
-		x += dx;
-		y += dy;
-	}
-}
 
 public class Main extends Application {
 
@@ -54,7 +46,10 @@ public class Main extends Application {
 	private Stage window;
 	private Scene mainMenu;
 	private StackPane root = new StackPane();
+	private StackPane gameContainer = new StackPane();
 	private Scene gameScene = new Scene(root, 1800, 900);
+	StackPane bossBarContainer = new StackPane();
+	StackPane entityInfoContainer = new StackPane();
 
 	// Sprite paths for player animations
 	private final String idleSpritePath = "/player_idleedited.png";
@@ -65,13 +60,14 @@ public class Main extends Application {
 	private final String jumpSpritePath = "./assets/sprite/player/player_jump.png";
 	private final String fallSpritePath = "./assets/sprite/player/player_fall.png";
 	private final String attack3SpritePath = "./assets/sprite/player/player_attack_airborne.png";
+	private final String attack4SpritePath = "./assets/sprite/player/player_attack_airborne2.png";
 
 	// Load all sprite images
 	private final Image[] spriteImages = { new Image(idleSpritePath), new Image(attack1SpritePath),
 			new Image(attack2SpritePath), new Image(walkSpritePath), new Image(crouchSpritePath),
 			new Image(jumpSpritePath), // Jump sprite
 			new Image(fallSpritePath), // Fall sprite
-			new Image(attack3SpritePath) };
+			new Image(attack3SpritePath), new Image(attack4SpritePath) };
 
 	// Sprite paths for enemy animations
 	private final String enemyIdleSpritePath = "./assets/sprite/boss/boss_idle.png";
@@ -88,11 +84,6 @@ public class Main extends Application {
 	// Input handling and player state management
 	private Set<KeyCode> pressedKeys = new HashSet<>();
 	private Player player = new Player();
-	private boolean isCrouching = false;
-	private boolean isJumping = false; // Track if the player is jumping
-	private boolean isWalking = false;
-	private Boolean[] isAttacking = { false }; // Track attacks
-	private int atkIdx = 1; // Attack index for combos
 
 	// Movement properties
 	private double currentSpeedX = 0; // Current horizontal speed
@@ -168,7 +159,7 @@ public class Main extends Application {
 		Button optionsButton = UIFactory.makeButton("Options");
 		Button quitButton = UIFactory.makeButton("Quit to Desktop");
 
-		Button headerLabel = UIFactory.makeButton("The Nigga Slasher", 70);
+		Button headerLabel = UIFactory.makeButton("PROJECT FLA WKWKW", 70);
 		headerLabel.setPadding(new Insets(80));
 
 		mainContainer.getChildren().addAll(headerLabel, playButton, optionsButton, quitButton);
@@ -184,9 +175,56 @@ public class Main extends Application {
 	private void setGameScene() {
 		// Set up media player with the video file
 		String bgPath = "../assets/sprite/scene/battleBG.mp4";
+		String enemyHealthBarPath = "./assets/sprite/ui/boss_healthbar.png";
+
 		Media media = new Media(getClass().getResource(bgPath).toExternalForm());
 		MediaPlayer mediaPlayer = new MediaPlayer(media);
 		mediaView = new MediaView(mediaPlayer);
+
+		Image enemyBarImage = new Image(enemyHealthBarPath);
+		ImageView enemyBarImgView = new ImageView(enemyBarImage);
+
+		enemyBarImgView.setFitWidth(root.getWidth() * 0.5);
+		enemyBarImgView.setPreserveRatio(true);
+
+		Rectangle bossBarLayer1 = new Rectangle(enemyBarImgView.getFitWidth() * 0.92, 40, Color.web("#992222"));
+		Rectangle bossBarLayer2 = new Rectangle(enemyBarImgView.getFitWidth() * 0.92, 20, Color.web("#b52a2a"));
+
+//		StackPane bossHealthContainer = new StackPane();
+//		bossHealthContainer.setPrefHeight(40);
+//		bossHealthContainer.setPrefWidth(enemyBarImgView.getFitWidth() * 0.92);
+//		bossHealthContainer.getChildren().addAll(bossBarLayer1, bossBarLayer2);
+//		bossHealthContainer.setAlignment(Pos.CENTER_LEFT);
+
+		bossBarContainer.getChildren().addAll(bossBarLayer1, bossBarLayer2, enemyBarImgView,
+				UIFactory.makeLabel("enemy.getName()", 20));
+		bossBarContainer.setTranslateY(-280);
+
+		String playerHealthBarPath = "./assets/sprite/ui/player_healthbar.png";
+		Image playerBarImage = new Image(playerHealthBarPath);
+
+		ImageView playerBarImgView = new ImageView(playerBarImage);
+		playerBarImgView.setFitWidth(root.getWidth() * 0.2);
+		playerBarImgView.setPreserveRatio(true);
+
+		StackPane playerBarContainer = new StackPane();
+		VBox playerHealth = new VBox();
+		playerHealth.getChildren().addAll(new Rectangle(playerBarImgView.getFitWidth(), 24, Color.GREENYELLOW),
+				new Rectangle(playerBarImgView.getFitWidth(), 24, Color.DARKCYAN));
+		playerBarContainer.getChildren().addAll(playerHealth, playerBarImgView);
+		playerBarContainer.setAlignment(Pos.CENTER_LEFT);
+
+		VBox playerInfoContainer = new VBox();
+		VBox topBox = new VBox();
+		topBox.setPrefHeight(root.getHeight() * 0.9);
+		playerInfoContainer.setPrefHeight(root.getHeight() - topBox.getHeight());
+		playerInfoContainer.setTranslateX(100);
+		playerInfoContainer.setPrefWidth(root.getWidth() / 2);
+		playerInfoContainer.getChildren().addAll(topBox, UIFactory.makeLabel("player.getName()", 13),
+				playerBarContainer);
+
+		entityInfoContainer.getChildren().addAll(bossBarContainer, playerInfoContainer);
+
 		backgroundMusic.setCycleCount(MediaPlayer.INDEFINITE);
 
 		// Set the size of the MediaView
@@ -203,18 +241,22 @@ public class Main extends Application {
 			mediaPlayer.play(); // Play the video when it's ready
 		});
 
-//		Rectangle rect = new Rectangle(100, 100, Color.BLUE);
-//		Rectangle rec2 = new Rectangle(100, 100, Color.RED);
-		root.setAlignment(Pos.CENTER);
 		gameScene.setFill(Color.BLACK);
-		bgPane.setPrefWidth(root.getWidth());
-		bgPane.setPrefHeight(root.getHeight());
+		bgPane.setPrefWidth(gameContainer.getWidth());
+		bgPane.setPrefHeight(gameContainer.getHeight());
 		bgPane.setAlignment(Pos.CENTER);
 
-		// Add media view to the root stack pane
-		root.getChildren().addAll(mediaView, playerCanvas, enemyCanvas);
-		root.setPrefWidth(2000);
+		// Add media view to the gameContainer stack pane
+		gameContainer.setAlignment(Pos.CENTER);
+		gameContainer.getChildren().addAll(mediaView, enemyCanvas, playerCanvas);
+		gameContainer.setPrefWidth(2000);
+		gameContainer.setStyle("-fx-background-color : black;");
+
+		root.getChildren().addAll(gameContainer, entityInfoContainer);
 		root.setStyle("-fx-background-color : black;");
+		root.setPrefHeight(gameContainer.getHeight());
+		root.setPrefWidth(gameContainer.getWidth());
+		root.setAlignment(Pos.CENTER);
 		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Loop the video
 
 		mediaPlayer.play(); // Start playing the video
@@ -271,17 +313,15 @@ public class Main extends Application {
 	private Timeline createAttackAnimation(int[] attackFrame) {
 		final int ATTACK_FRAMES = 8;
 		return new Timeline(new KeyFrame(Duration.millis(23), event -> {
-			if (isAttacking[0]) {
+			attackFrame[0]++;
 
-				attackFrame[0]++;
-			}
 		}));
 	}
 
 	private Timeline createCrouchAnimation(int[] crouchFrame) {
 		final int CROUCH_FRAMES = 2;
 		return new Timeline(new KeyFrame(Duration.millis(150), event -> {
-			if (!isCrouching) {
+			if (!player.isCrouching()) {
 				crouchFrame[0] = 2;
 			} else
 				crouchFrame[0] = (crouchFrame[0] + 1) % CROUCH_FRAMES;
@@ -304,12 +344,6 @@ public class Main extends Application {
 		playerGC.clearRect(0, 0, 2000, 2000);
 		enemyGC.clearRect(0, 0, 2000, 2000);
 
-//		System.out.println(currentSpeedX);
-//		System.out.println(acceleration);
-
-//		drawGuideLine(playerCanvas, playerGC, playerCanvas.getHeight()); // For player
-//		drawGuideLine(enemyCanvas, enemyGC, playerCanvas.getHeight()); // For enemy
-
 		handlePlayerMovement();
 		handleEnemyMovement();
 
@@ -321,7 +355,7 @@ public class Main extends Application {
 	}
 
 	private void handlePlayerAudio() {
-		if (isWalking) {
+		if (player.isWalking()) {
 
 		}
 	}
@@ -330,12 +364,12 @@ public class Main extends Application {
 		// Update current speed based on key presses
 		if (pressedKeys.contains(KeyCode.D) && player.getX() < maxX) {
 			currentSpeedX += acceleration * 0.03;
-			isWalking = true;// Increase speed
+			player.setWalking(true);// Increase speed
 		} else if (pressedKeys.contains(KeyCode.A) && player.getX() > minX) {
 			currentSpeedX -= acceleration * 0.016;
-			isWalking = true;// Decrease speed
+			player.setWalking(true);// Decrease speed
 		} else {
-			isWalking = false;
+			player.setWalking(false);
 			if (currentSpeedX < 0.7 && currentSpeedX > -0.7) {
 				currentSpeedX = 0;
 			}
@@ -350,13 +384,13 @@ public class Main extends Application {
 		currentSpeedX = Math.max(-maxSpeed, Math.min(currentSpeedX, maxSpeed));
 
 		// Handle jumping
-		if (pressedKeys.contains(KeyCode.W) && !isJumping) {
+		if (pressedKeys.contains(KeyCode.W) && !player.isJumping()) {
 			verticalVelocity = -jumpStrength; // Set upward velocity
-			isJumping = true; // Player is now jumping
+			player.setJumping(true); // Player is now jumping
 		}
 
 		// Apply gravity
-		if (isJumping) {
+		if (player.isJumping()) {
 			verticalVelocity += gravity; // Increase downward velocity
 			player.move(0, verticalVelocity); // Move player vertically
 		}
@@ -367,15 +401,15 @@ public class Main extends Application {
 		// Check if player has landed (simple ground collision)
 		if (player.getY() >= groundLevel) { // Assuming groundLevel is defined
 			player.setY(groundLevel); // Reset player to ground level
-			isJumping = false; // Player can jump again
+			player.setJumping(false); // Player can jump again
 			verticalVelocity = 0; // Reset vertical velocity
 		}
 
 		double parallaxXFactor = 0.2; // Adjust this value to control the speed of the background movement
-		root.setTranslateX((-player.getX() * parallaxXFactor) + 140);
-
+		gameContainer.setTranslateX((-player.getX() * parallaxXFactor) + 140);
+		entityInfoContainer.setTranslateX(player.getX() * parallaxXFactor / 10);
 		double parallaxYFactor = 0.2; // Adjust this value to control the speed of the background movement
-		root.setTranslateY((-player.getY() * parallaxYFactor) + 50);
+		gameContainer.setTranslateY((-player.getY() * parallaxYFactor) + 130);
 	}
 
 	private void handleEnemyMovement() {
@@ -413,16 +447,17 @@ public class Main extends Application {
 			Timeline idleAnimation, Timeline walkAnimation, Timeline attackAnimation, Timeline crouchAnimation) {
 		playerGC.save();
 		if ((!pressedKeys.contains(KeyCode.W) && !pressedKeys.contains(KeyCode.A) && !pressedKeys.contains(KeyCode.S)
-				&& !pressedKeys.contains(KeyCode.D)) && !isAttacking[0] && !isJumping) {
+				&& !pressedKeys.contains(KeyCode.D)) && !player.isAttacking() && !player.isJumping()) {
 			playerGC.drawImage(spriteImages[0], idleFrame[0] * FRAME_WIDTH, 0, FRAME_WIDTH, FRAME_HEIGHT, player.getX(),
 					player.getY(), FRAME_WIDTH * playerSizeMultiplier, FRAME_HEIGHT * playerSizeMultiplier);
 		}
 
-		if (pressedKeys.contains(KeyCode.D) && !isAttacking[0] && !isJumping && !isCrouching) {
+		if (pressedKeys.contains(KeyCode.D) && !player.isAttacking() && !player.isJumping() && !player.isCrouching()) {
 			walkAnimation.play();
 			playerGC.drawImage(spriteImages[3], walkFrame[0] * FRAME_WIDTH, 0, FRAME_WIDTH, FRAME_HEIGHT, player.getX(),
 					player.getY(), FRAME_WIDTH * playerSizeMultiplier, FRAME_HEIGHT * playerSizeMultiplier);
-		} else if (pressedKeys.contains(KeyCode.A) && !isAttacking[0] && !isJumping && !isCrouching) {
+		} else if (pressedKeys.contains(KeyCode.A) && !player.isAttacking() && !player.isJumping()
+				&& !player.isCrouching()) {
 			walkAnimation.play();
 			// Save the current state of the GraphicsContext
 			playerGC.translate(player.getX() + FRAME_WIDTH * playerSizeMultiplier, player.getY()); // Move to player's
@@ -436,34 +471,35 @@ public class Main extends Application {
 			idleAnimation.play();
 		}
 
-		if (pressedKeys.contains(KeyCode.S) && !isJumping) {
-			isCrouching = true;
+		if (pressedKeys.contains(KeyCode.S) && !player.isJumping()) {
+			player.setCrouching(true);
 			crouchAnimation.play();
 			playerGC.drawImage(spriteImages[4], crouchFrame[0] * FRAME_WIDTH, 0, FRAME_WIDTH, FRAME_HEIGHT,
 					player.getX(), player.getY(), FRAME_WIDTH * playerSizeMultiplier,
 					FRAME_HEIGHT * playerSizeMultiplier);
 		} else {
-			isCrouching = false;
+			player.setCrouching(false);
 		}
 
-		if (pressedKeys.contains(KeyCode.SPACE) && !isAttacking[0]) {
-			atkIdx = ((atkIdx + 1) % 2);
-			isAttacking[0] = true; // Set attacking state
+		if (pressedKeys.contains(KeyCode.SPACE) && !player.isAttacking()) {
+			player.setAtkIdx(((player.getAtkIdx() + 1) % 2));
+			player.setAttacking(true); // Set attacking state
 			idleAnimation.pause(); // Pause idle animation
 			attackFrame[0] = 0; // Reset attack frame
 			attackAnimation.play(); // Play attack animation
 		}
 
-		if (!isAttacking[0]) {
+		if (!player.isAttacking()) {
 			swordSwingAudio.stop();
 			attackAnimation.stop();
 			attackFrame[0] = 0;
 		} else {
-			if (isJumping) {
-				playerGC.drawImage(spriteImages[7], attackFrame[0] * 80, 0, 80, FRAME_HEIGHT, player.getX() - 40,
-						player.getY(), 80 * playerSizeMultiplier, FRAME_HEIGHT * playerSizeMultiplier);
+			if (player.isJumping()) {
+				playerGC.drawImage(spriteImages[7 + player.getAtkIdx()], attackFrame[0] * 80, 0, 80, FRAME_HEIGHT,
+						player.getX() - 40, player.getY(), 80 * playerSizeMultiplier,
+						FRAME_HEIGHT * playerSizeMultiplier);
 			} else {
-				playerGC.drawImage(spriteImages[atkIdx + 1], attackFrame[0] * 80, 0, 80, FRAME_HEIGHT,
+				playerGC.drawImage(spriteImages[player.getAtkIdx() + 1], attackFrame[0] * 80, 0, 80, FRAME_HEIGHT,
 						player.getX() - 40, player.getY(), 80 * playerSizeMultiplier,
 						FRAME_HEIGHT * playerSizeMultiplier);
 			}
@@ -471,14 +507,14 @@ public class Main extends Application {
 
 		if (attackFrame[0] >= 8) {
 			attackFrame[0] = 0; // Reset attack frame index
-			isAttacking[0] = false; // Reset attack state
+			player.setAttacking(false); // Reset attack state
 			attackAnimation.stop(); // Stop the attack animation
 			swordSwingAudio.stop();
-		} else if (attackFrame[0] == 0 && isAttacking[0]) {
+		} else if (attackFrame[0] == 0 && player.isAttacking()) {
 			swordSwingAudio.play();
 		}
 
-		if (isJumping && !isAttacking[0]) {
+		if (player.isJumping() && !player.isAttacking()) {
 			// Check if player is jumping or falling based on vertical velocity
 			if (verticalVelocity < 0) { // Jumping
 				playerGC.drawImage(spriteImages[5], 0, 0, FRAME_WIDTH, FRAME_HEIGHT, player.getX(), player.getY(),
