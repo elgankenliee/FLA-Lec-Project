@@ -12,24 +12,24 @@ public class AnimationController {
     private IAnimation currentAnimation;
 
     public AnimationController() {
-        this.animations = new HashMap<>();
+      this.animations = new HashMap<>();
     }
 
     public void addAnimation(int state, IAnimation animation) {
-        animations.put(state, animation);
+      animations.put(state, animation);
     }
 
     public void setCurrentAnimation(int state) {
-        currentAnimation = animations.get(state);
+      currentAnimation = animations.get(state);
     }
 
     public IAnimation getCurrentAnimation() {
-        return currentAnimation;
+      return currentAnimation;
     }
 
     public void update(long currentTime) {
-        if (currentAnimation != null) {
-            currentAnimation.update(currentTime);
-        }
+      if (currentAnimation != null) {
+          currentAnimation.update(currentTime);
+      }
     }
 }
