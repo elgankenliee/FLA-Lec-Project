@@ -1,6 +1,6 @@
 package controllers;
 
-import Entities.Enemy;
+import game.core.models.entities.Enemy;
 
 public class EnemyStateController extends Thread {
 
