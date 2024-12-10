@@ -274,21 +274,24 @@ public class Main extends Application {
 		
 
 	    if (currentAnimation != null) {
-	    	int frameX = currentAnimation.getCurrentFrame() * PlayerAnimation.FRAME_WIDTH;
-	        int width = PlayerAnimation.FRAME_WIDTH;
+	      final int cropWidth = currentAnimation.getCropWidth();
+	      final int cropHeight = currentAnimation.getCropHeight();
+	      
+	    	int frameX = currentAnimation.getCurrentFrame() * cropWidth;
+        int width = cropWidth;
 	        
-	        if (!player.isFacingRight()) {
-	        	frameX += PlayerAnimation.FRAME_WIDTH;
-	        	width = -width;
-	        }
+        if (playerManager.getDirection() < 0) {
+        	frameX += cropWidth;
+        	width = -width;
+        }
 
-	        playerGC.drawImage(
-	            currentAnimation.getSpriteImage(),
-	            frameX, 0, width, PlayerAnimation.FRAME_HEIGHT,
-	            player.getPos().getX(), player.getPos().getY(),
-	            PlayerAnimation.FRAME_WIDTH * playerSizeMultiplier,
-	            PlayerAnimation.FRAME_HEIGHT * playerSizeMultiplier 
-	        );
+        playerGC.drawImage(
+            currentAnimation.getSpriteImage(),
+            frameX, 0, width, cropHeight,
+            player.getPos().getX(), player.getPos().getY(),
+            cropWidth * playerSizeMultiplier,
+            cropHeight * playerSizeMultiplier 
+        );
 	    }
 		
 

@@ -5,8 +5,7 @@ import game.core.models.Position;
 public class Player implements ICharacter{
 	private int health;
 	private Position pos;
-  private boolean facingRight;
-  private int state; // Bitmask for states
+	private int state; // Bitmask for states
 	private int attackIndex; // Attack index for combos
 	
 	public Player(int health, Position pos, int state) {
@@ -33,11 +32,6 @@ public class Player implements ICharacter{
 		// TODO Auto-generated method stub
 		
 	}
-
-  public boolean isFacingRight() {
-      return facingRight;
-  }
-
 
 	public void resetState() {
 		this.state = 0;
@@ -72,10 +66,6 @@ public class Player implements ICharacter{
 	public void setAttackIndex(int attackIndex) {
 		this.attackIndex = attackIndex;
 	}
-	
-  public void setFacingRight(boolean facingRight) {
-    this.facingRight = facingRight;
-  }
     
 	public void setState(int state) {
 		this.state = state;

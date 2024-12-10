@@ -7,4 +7,9 @@ public class PlayerState {
   public static final int JUMPING = 1 << 2;  // 0100
   public static final int ATTACKING = 1 << 3; // 1000
   public static final int FALLING = 1 << 4;
+  
+
+  public static boolean isInterruptible(int currentState) {
+      return (currentState & ATTACKING) == 0;
+  }
 }

@@ -36,10 +36,16 @@ public class PlayerManager {
     animationController.addAnimation(PlayerState.WALKING, new PlayerAnimation("src/assets/sprite/player/player_walk.png", 8, 50));
     animationController.addAnimation(PlayerState.JUMPING, new PlayerAnimation("src/assets/sprite/player/player_jump.png", 4, 200));
     animationController.addAnimation(PlayerState.FALLING, new PlayerAnimation("src/assets/sprite/player/player_fall.png", 2, 150));
-    animationController.addAnimation(PlayerState.ATTACKING, new PlayerAnimation("src/assets/sprite/player/player_attack_1.png", 5, 100));
+    animationController.addAnimation(PlayerState.ATTACKING, new PlayerAnimation("src/assets/sprite/player/player_attack_1.png", 8, 23, 80, 60));
+    animationController.addAnimation(PlayerState.ATTACKING + 1, new PlayerAnimation("src/assets/sprite/player/player_attack_2.png", 8, 23, 80, 60));
 
+    
+    start();
+  }
+  
+  
+  public void start() {
     animationController.setCurrentAnimation(PlayerState.IDLE);
-
   }
   
   public void update() {
@@ -59,6 +65,7 @@ public class PlayerManager {
   }
   
   private void handleAnimation() {
+
     animationController.setCurrentAnimation(player.getState());
     animationController.update(System.currentTimeMillis());
   }
@@ -66,6 +73,11 @@ public class PlayerManager {
   private void handleInput() {
       
     player.resetState();
+    
+    if(pressedKeys.contains(KeyCode.SPACE)) {
+      player.setState(PlayerState.ATTACKING);
+      return;
+    }
     
     if (delta.getY() > 1) {
       player.setState(PlayerState.FALLING);
@@ -79,11 +91,9 @@ public class PlayerManager {
 
     if (pressedKeys.contains(KeyCode.A)) {
       player.setState(PlayerState.WALKING);
-      player.setFacingRight(false);
     }
     else if (pressedKeys.contains(KeyCode.D)) {
       player.setState(PlayerState.WALKING);
-      player.setFacingRight(true); 
     }
     else{
       player.setState(PlayerState.IDLE);
@@ -100,5 +110,9 @@ public class PlayerManager {
   
   public IAnimation getCurrentAnimation() {
     return this.animationController.getCurrentAnimation();
+  }
+  
+  public Double getDirection() {
+    return this.delta.getX();
   }
 }
