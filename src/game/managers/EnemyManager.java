@@ -2,7 +2,7 @@ package game.managers;
 
 import game.controllers.AnimationController;
 import game.core.animations.IAnimation;
-import game.core.animations.player.PlayerAnimation;
+import game.core.animations.CharacterAnimation;
 import game.core.interfaces.FXBehaviour;
 import game.core.models.Position;
 import game.core.models.entities.Enemy;
@@ -28,7 +28,7 @@ public class EnemyManager implements FXBehaviour{
 
   @Override
   public void start() {
-    animationController.addAnimation(0, new PlayerAnimation("src/assets/sprite/boss/boss_idle.png", 8, 150, 120, 120));
+    animationController.addAnimation(0, new CharacterAnimation("src/assets/sprite/boss/boss_idle.png", 8, 150, 120, 120));
     animationController.setCurrentAnimation(0);
   }
 

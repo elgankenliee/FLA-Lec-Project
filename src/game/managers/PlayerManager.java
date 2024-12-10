@@ -7,7 +7,7 @@ import java.util.Set;
 import game.controllers.AnimationController;
 import game.controllers.MovementController;
 import game.core.animations.IAnimation;
-import game.core.animations.player.PlayerAnimation;
+import game.core.animations.CharacterAnimation;
 import game.core.constants.PlayerState;
 import game.core.interfaces.FXBehaviour;
 import game.core.models.Position;
@@ -41,12 +41,12 @@ public class PlayerManager implements FXBehaviour {
   
   @Override
   public void start() {
-    animationController.addAnimation(PlayerState.IDLE, new PlayerAnimation("src/assets/sprite/player/player_idleedited.png", 4, 150));
-    animationController.addAnimation(PlayerState.WALKING, new PlayerAnimation("src/assets/sprite/player/player_walk.png", 8, 45));
-    animationController.addAnimation(PlayerState.JUMPING, new PlayerAnimation("src/assets/sprite/player/player_jump.png", 4, 200));
-    animationController.addAnimation(PlayerState.FALLING, new PlayerAnimation("src/assets/sprite/player/player_fall.png", 2, 150));
-    animationController.addAnimation(PlayerState.ATTACKING, new PlayerAnimation("src/assets/sprite/player/player_attack_1.png", 8, 23, 80, 60));
-    animationController.addAnimation(PlayerState.ATTACKING + 1, new PlayerAnimation("src/assets/sprite/player/player_attack_2.png", 8, 23, 80, 60));
+    animationController.addAnimation(PlayerState.IDLE, new CharacterAnimation("src/assets/sprite/player/player_idleedited.png", 4, 150));
+    animationController.addAnimation(PlayerState.WALKING, new CharacterAnimation("src/assets/sprite/player/player_walk.png", 8, 45));
+    animationController.addAnimation(PlayerState.JUMPING, new CharacterAnimation("src/assets/sprite/player/player_jump.png", 4, 200));
+    animationController.addAnimation(PlayerState.FALLING, new CharacterAnimation("src/assets/sprite/player/player_fall.png", 2, 150));
+    animationController.addAnimation(PlayerState.ATTACKING, new CharacterAnimation("src/assets/sprite/player/player_attack_1.png", 8, 23, 80, 60));
+    animationController.addAnimation(PlayerState.ATTACKING + 1, new CharacterAnimation("src/assets/sprite/player/player_attack_2.png", 8, 23, 80, 60));
     animationController.setCurrentAnimation(PlayerState.IDLE);
   }
   

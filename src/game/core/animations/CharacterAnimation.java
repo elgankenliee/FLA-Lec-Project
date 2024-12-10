@@ -1,16 +1,14 @@
-package game.core.animations.player;
+package game.core.animations;
 
 
 import java.io.File;
 
-import game.core.animations.IAnimation;
 import javafx.scene.image.Image;
 
-public class PlayerAnimation implements IAnimation{
+public class CharacterAnimation implements IAnimation{
   private final int DEFAULT_FRAME_WIDTH = 60;
   private final int DEFAULT_FRAME_HEIGHT = 60;
 
-  
   public final String spritePath;
   private final Image spriteImage;
   private final int spriteColumns;
@@ -22,7 +20,7 @@ public class PlayerAnimation implements IAnimation{
   private int currentFrame;
   private long lastFrameTime;
   
-  public PlayerAnimation(
+  public CharacterAnimation(
       String spritePath,
       int spriteColumns,
       long frameDuration
@@ -38,7 +36,7 @@ public class PlayerAnimation implements IAnimation{
     this.lastFrameTime = 0;
   }
   
-  public PlayerAnimation(
+  public CharacterAnimation(
       String spritePath,
       int spriteColumns,
       long frameDuration,

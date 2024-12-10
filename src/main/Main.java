@@ -6,7 +6,7 @@ import java.util.Set;
 import game.UIFactory;
 import game.controllers.MovementController;
 import game.core.animations.IAnimation;
-import game.core.animations.player.PlayerAnimation;
+import game.core.animations.CharacterAnimation;
 import game.core.constants.PlayerState;
 import game.core.models.Position;
 import game.core.models.entities.Enemy;
