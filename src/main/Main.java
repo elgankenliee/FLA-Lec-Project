@@ -24,6 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -62,12 +63,12 @@ public class Main extends Application {
 
 
 	private Player player = new Player(
-		100,
+		1000,
 	  new Position(350, 580),
 		PlayerState.IDLE
 	);
 	private PlayerManager playerManager = new PlayerManager(player);
-
+	private Label playerHealthLabel = UIFactory.makeLabel("Player Health: " + player.getHealth(), 10);
 
 	private Enemy enemy = new Enemy(
     1000,
@@ -165,7 +166,8 @@ public class Main extends Application {
 //		bossHealthContainer.setAlignment(Pos.CENTER_LEFT);
 
 		bossBarContainer.getChildren().addAll(bossBarLayer1, bossBarLayer2, enemyBarImgView,
-				UIFactory.makeLabel("enemy.getName()", 20));
+//				UIFactory.makeLabel("enemy.getName()", 20), 
+				UIFactory.makeLabel("Enemy Health: " + enemy.getHealth(), 10));
 		bossBarContainer.setTranslateY(-280);
 
 		String playerHealthBarPath = "./assets/sprite/ui/player_healthbar.png";
@@ -190,8 +192,15 @@ public class Main extends Application {
 		playerInfoContainer.setPrefWidth(root.getWidth() / 2);
 		playerInfoContainer.getChildren().addAll(topBox, UIFactory.makeLabel("player.getName()", 13),
 				playerBarContainer);
+		VBox playerHealthContainer = new VBox();
+		topBox.setPrefHeight(root.getHeight() * 0.9);
+		playerHealthContainer.setPrefHeight(root.getHeight() - topBox.getHeight());
+		playerHealthContainer.setTranslateX(100);
+		playerHealthContainer.setPrefWidth(root.getWidth() / 2);
+		playerHealthContainer.getChildren().addAll(topBox, playerHealthLabel,
+				playerBarContainer);
 
-		entityInfoContainer.getChildren().addAll(bossBarContainer, playerInfoContainer);
+		entityInfoContainer.getChildren().addAll(bossBarContainer, playerInfoContainer, playerHealthContainer);
 
 		backgroundMusic.setCycleCount(MediaPlayer.INDEFINITE);
 
@@ -264,31 +273,41 @@ public class Main extends Application {
 	}
 
 	private void draw(
-    GraphicsContext gc,
-    IAnimation animation, 
-    Position pos,
-    int direction
-  ) {
-	  if (animation == null) return;
-	  
-    final int cropWidth = animation.getCropWidth();
-    final int cropHeight = animation.getCropHeight();
-    
-    int frameX = animation.getCurrentFrame() * cropWidth;
-    int width = cropWidth;
-      
-    if (direction < 0) {
-      frameX += cropWidth;
-      width = -width;
-    }
-    
-    gc.drawImage(
-        animation.getSpriteImage(),
-        frameX, 0, width, cropHeight,
-        pos.getX(), pos.getY(),
-        cropWidth * 4, //
-        cropHeight * 4 //
-    );  
+		    GraphicsContext gc,
+		    IAnimation animation, 
+		    Position pos,
+		    int direction
+		) {
+		    if (animation == null) return;
+
+		    final int cropWidth = animation.getCropWidth();
+		    final int cropHeight = animation.getCropHeight();
+
+		    int frameX = animation.getCurrentFrame() * cropWidth;
+		    int width = cropWidth;
+
+		    // Flip horizontally if direction < 0
+		    if (direction < 0) {
+		        frameX += cropWidth;
+		        width = -width;
+		    }
+
+		    double offsetX = 0; //-120  Adjust horizontal offset (negative moves left)
+		    double offsetY = 0; //-100  Adjust vertical offset (negative moves up)
+
+		    double adjustedX = pos.getX() + offsetX;
+		    double adjustedY = pos.getY() - cropHeight + offsetY;
+
+		    gc.drawImage(
+		        animation.getSpriteImage(),
+		        frameX, 0, width, cropHeight,    // Crop source
+		        adjustedX, adjustedY,           // Target position
+		        cropWidth * 4,                  // Scale X
+		        cropHeight * 4                  // Scale Y
+		    );
+//		    // Debug marker
+//		    gc.setFill(Color.RED);
+//		    gc.fillRect(pos.getX() - 5, pos.getY() - 5, 10, 10); 
 	}
 	
 	
@@ -306,14 +325,17 @@ public class Main extends Application {
     IAnimation enemyAnimation = enemyManager.getCurrentAnimation();
     
     draw(playerGC, playerAnimation, player.getPos(), playerManager.getDirection());
-    draw(enemyGC, enemyAnimation, enemy.getPos(), -1);
+    int enemyDirection = (enemy.getPos().getX() > player.getPos().getX()) ? 1 : -1;
+    draw(enemyGC, enemyAnimation, enemy.getPos(), enemyDirection);
     
     parallax();
 	}
 	
 	private void update() {
 		playerManager.update();
-		enemyManager.update();
+		enemyManager.update(player);
+		
+		 playerHealthLabel.setText("Player Health: " + player.getHealth());
 	}
 
 

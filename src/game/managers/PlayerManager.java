@@ -57,6 +57,7 @@ public class PlayerManager implements FXBehaviour {
     handleAnimation();
   }
   
+  
   private void handleMovement() {
     delta = movementController.update(
       pressedKeys,
@@ -125,4 +126,11 @@ public class PlayerManager implements FXBehaviour {
   public int getDirection() {
     return this.facingDirection;
   }
+
+
+@Override
+public void update(Player player) {
+	// TODO Auto-generated method stub
+	
+}
 }
