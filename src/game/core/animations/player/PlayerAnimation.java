@@ -11,7 +11,7 @@ public class PlayerAnimation implements IAnimation{
   private final int DEFAULT_FRAME_HEIGHT = 60;
 
   
-  private final String spritePath;
+  public final String spritePath;
   private final Image spriteImage;
   private final int spriteColumns;
   private final long frameDuration;
@@ -22,8 +22,6 @@ public class PlayerAnimation implements IAnimation{
   private int currentFrame;
   private long lastFrameTime;
   
-  private int transitionEase;
-
   public PlayerAnimation(
       String spritePath,
       int spriteColumns,
@@ -38,7 +36,6 @@ public class PlayerAnimation implements IAnimation{
     this.cyclesCompleted = 0;
     this.currentFrame = 0;
     this.lastFrameTime = 0;
-    this.transitionEase = (int) ((int)this.spriteColumns * 0.8);
   }
   
   public PlayerAnimation(
@@ -54,12 +51,10 @@ public class PlayerAnimation implements IAnimation{
     this.frameDuration = frameDuration;
     this.cropWidth = cropWidth;
     this.cropHeight = cropHeight;
-  }
+      }
 
   @Override
   public void start() {
-    this.cyclesCompleted = 0;
-    
   }
   
   @Override

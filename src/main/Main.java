@@ -11,6 +11,7 @@ import game.core.constants.PlayerState;
 import game.core.models.Position;
 import game.core.models.entities.Enemy;
 import game.core.models.entities.Player;
+import game.managers.EnemyManager;
 import game.managers.PlayerManager;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
@@ -60,26 +61,20 @@ public class Main extends Application {
 	StackPane entityInfoContainer = new StackPane();
 
 
-	// Sprite paths for enemy animations
-	private final String enemyIdleSpritePath = "./assets/sprite/boss/boss_idle.png";
-	private final String enemySpinSpritePath = "./assets/sprite/boss/boss_spin.png";
-	private final String enemySpawnSpritePath = "./assets/sprite/boss/boss_spawn.png";
-
-	// Load enemy sprite images
-	private final Image[] enemySpriteImages = { new Image(enemyIdleSpritePath), new Image(enemySpinSpritePath),
-			new Image(enemySpawnSpritePath) };
-	int enemySpriteIdx = 2;
-
 	private Player player = new Player(
-			100,
-			new Position(350, 580),
-			PlayerState.IDLE
-		);
+		100,
+	  new Position(350, 580),
+		PlayerState.IDLE
+	);
 	private PlayerManager playerManager = new PlayerManager(player);
 
 
-	// Enemy instance
-	private Enemy enemy = new Enemy(1000);
+	private Enemy enemy = new Enemy(
+    1000,
+    new Position(640, 340)
+  );
+	
+	private EnemyManager enemyManager = new EnemyManager(enemy);
 
 	// Background pane setup
 	private StackPane bgPane = new StackPane();
@@ -96,10 +91,6 @@ public class Main extends Application {
 	// MediaView setup (for video backgrounds)
 	private MediaView mediaView;
 
-	// Scaling factor for player size
-	private final int playerSizeMultiplier = 4;
-	private final int enemySizeMultiplier = 4;
-
 	private String bgMusicPath = "../assets/audio/song/tokyobluesloop.mp3"; // Replace with your file path
 	private Media bgMusicMedia = new Media(getClass().getResource(bgMusicPath).toExternalForm());
 	private MediaPlayer backgroundMusic = new MediaPlayer(bgMusicMedia);
@@ -112,6 +103,8 @@ public class Main extends Application {
 		window.show();
 	}
 
+	
+	@Deprecated
 	private void drawGuideLine(Canvas c, GraphicsContext gc, double y) {
 		gc.setStroke(Color.RED); // Set the color of the line
 		gc.setLineWidth(2); // Set the width of the line
@@ -240,193 +233,89 @@ public class Main extends Application {
 		window.setScene(gameScene);
 		window.setFullScreen(true);
 
-		gameScene.setOnKeyPressed(event -> {
-			playerManager.addKeyPressed(event.getCode());
-			
-		});
-		gameScene.setOnKeyReleased(event -> {
-			playerManager.removeKeyPressed(event.getCode());
-		});
-		
-	    AnimationTimer gameLoop = new AnimationTimer() {
-	        private long lastUpdate = 0;
+		start();
+	}
+	
+	
+	// =======
+	private void start() {
+	  gameScene.setOnKeyPressed(event -> {
+      playerManager.addKeyPressed(event.getCode());
+      
+    });
+    gameScene.setOnKeyReleased(event -> {
+      playerManager.removeKeyPressed(event.getCode());
+    });
+    
+    AnimationTimer gameLoop = new AnimationTimer() {
+        private long lastUpdate = 0;
 
-	        @Override
-	        public void handle(long now) {
-	            if (lastUpdate == 0 || now - lastUpdate >= 16_666_667) { // ~60 FPS
-	            	update(); 
-//	                renderGame();
-	                lastUpdate = now;
-	            }
-	        }
-	    };
+        @Override
+        public void handle(long now) {
+            if (lastUpdate == 0 || now - lastUpdate >= 16_666_667) { // ~60 FPS
+              update(); 
+              render();
+              lastUpdate = now;
+            }
+        }
+    };
 
-	    gameLoop.start();
+    gameLoop.start();
 	}
 
+	private void draw(
+    GraphicsContext gc,
+    IAnimation animation, 
+    Position pos,
+    int direction
+  ) {
+	  if (animation == null) return;
+	  
+    final int cropWidth = animation.getCropWidth();
+    final int cropHeight = animation.getCropHeight();
+    
+    int frameX = animation.getCurrentFrame() * cropWidth;
+    int width = cropWidth;
+      
+    if (direction < 0) {
+      frameX += cropWidth;
+      width = -width;
+    }
+    
+    gc.drawImage(
+        animation.getSpriteImage(),
+        frameX, 0, width, cropHeight,
+        pos.getX(), pos.getY(),
+        cropWidth * 4, //
+        cropHeight * 4 //
+    );  
+	}
+	
+	
+	private void parallax() {
+    gameContainer.setTranslateX((-player.getPos().getX() * 0.2) + 140);
+    entityInfoContainer.setTranslateX(player.getPos().getX() * 0.2 / 10);
+    gameContainer.setTranslateY((-player.getPos().getY() * 0.2) + 130);
+	}
+	
+	private void render() {
+	  playerGC.clearRect(0, 0, 2000, 2000);
+    enemyGC.clearRect(0, 0, 2000, 2000);
+    
+	  IAnimation playerAnimation = playerManager.getCurrentAnimation();
+    IAnimation enemyAnimation = enemyManager.getCurrentAnimation();
+    
+    draw(playerGC, playerAnimation, player.getPos(), playerManager.getDirection());
+    draw(enemyGC, enemyAnimation, enemy.getPos(), -1);
+    
+    parallax();
+	}
 	
 	private void update() {
-		playerGC.clearRect(0, 0, 2000, 2000);
-		enemyGC.clearRect(0, 0, 2000, 2000);
-
 		playerManager.update();
-	    IAnimation currentAnimation = playerManager.getCurrentAnimation();
-		
-
-	    if (currentAnimation != null) {
-	      final int cropWidth = currentAnimation.getCropWidth();
-	      final int cropHeight = currentAnimation.getCropHeight();
-	      
-	    	int frameX = currentAnimation.getCurrentFrame() * cropWidth;
-        int width = cropWidth;
-	        
-        if (playerManager.getDirection() < 0) {
-        	frameX += cropWidth;
-        	width = -width;
-        }
-
-        playerGC.drawImage(
-            currentAnimation.getSpriteImage(),
-            frameX, 0, width, cropHeight,
-            player.getPos().getX(), player.getPos().getY(),
-            cropWidth * playerSizeMultiplier,
-            cropHeight * playerSizeMultiplier 
-        );
-	    }
-		
-
+		enemyManager.update();
 	}
 
-//	private void handlePlayerAudio() {
-//
-//	}
-
-
-//	private void handleEnemyMovement() {
-//
-//	}
-
-//	private void handleEnemyAnimations(int[] enemyIdleFrame, int[] enemySpawnFrame, Timeline enemyIdleAnimation,
-//			Timeline enemySpawnAnimation) {
-//		// Save the current state of the GraphicsContext
-//		enemyGC.save();
-//		enemyGC.translate(enemy.getPos().getX(), enemy.getPos().getY() - 250); // Adjusting Y position as per your requirement
-//
-//		// Draw frames on canvas
-//		if (enemy.isSpawning()) {
-//			handleEnemyCanvas(enemySpawnFrame);
-//		} else {
-//			handleEnemyCanvas(enemyIdleFrame);
-//		}
-//
-//		// Restore the state of the GraphicsContext
-//		enemyGC.restore();
-//	}
-
-//	private void handleEnemyCanvas(int[] spawnFrame) {
-//		if (enemy.getPos().getX() > player.getPos().getX()) {
-//			// Draw normally if the enemy is facing right
-//			enemyGC.drawImage(enemySpriteImages[enemySpriteIdx], spawnFrame[0] * 120, 0, 120, 120, 0, 0,
-//					120 * enemySizeMultiplier, 120 * enemySizeMultiplier);
-//		} else {
-//			// Flip horizontally if the enemy is to the left of the player
-//			enemyGC.scale(-1, 1); // Flip horizontally
-//			enemyGC.drawImage(enemySpriteImages[enemySpriteIdx], spawnFrame[0] * 120, 0, 120, 120,
-//					-120 * enemySizeMultiplier, 0, 120 * enemySizeMultiplier, 120 * enemySizeMultiplier);
-//		}
-//	}
-
-//	private void handlePlayerAnimations(int[] idleFrame, int[] walkFrame, int[] attackFrame, int[] crouchFrame,
-//			Timeline idleAnimation, Timeline walkAnimation, Timeline attackAnimation, Timeline crouchAnimation) {
-//		playerGC.save();
-		
-//		idleAnimation.play();
-//		
-//		playerGC.drawImage(spriteImages[0], idleFrame[0] * FRAME_WIDTH, 0, FRAME_WIDTH, FRAME_HEIGHT, player.getPos().getX(),
-//				player.getPos().getY(), FRAME_WIDTH * playerSizeMultiplier, FRAME_HEIGHT * playerSizeMultiplier);
-		
-
-		
-//		if ((!pressedKeys.contains(KeyCode.W) && !pressedKeys.contains(KeyCode.A) && !pressedKeys.contains(KeyCode.S)
-//				&& !pressedKeys.contains(KeyCode.D)) && !player.hasState(PlayerState.ATTACKING | PlayerState.JUMPING)) {
-//			playerGC.drawImage(spriteImages[0], idleFrame[0] * FRAME_WIDTH, 0, FRAME_WIDTH, FRAME_HEIGHT, player.getPos().getX(),
-//					player.getPos().getY(), FRAME_WIDTH * playerSizeMultiplier, FRAME_HEIGHT * playerSizeMultiplier);
-//		}
-//
-//		if (pressedKeys.contains(KeyCode.D) && !player.hasState(PlayerState.ATTACKING | PlayerState.JUMPING | PlayerState.CROUCHING)) {
-//			walkAnimation.play();
-//			playerGC.drawImage(spriteImages[3], walkFrame[0] * FRAME_WIDTH, 0, FRAME_WIDTH, FRAME_HEIGHT, player.getPos().getX(),
-//					player.getPos().getY(), FRAME_WIDTH * playerSizeMultiplier, FRAME_HEIGHT * playerSizeMultiplier);
-//		} else if (pressedKeys.contains(KeyCode.A) && !player.hasState(PlayerState.ATTACKING | PlayerState.JUMPING | PlayerState.CROUCHING)) {
-//			walkAnimation.play();
-//			// Save the current state of the GraphicsContext
-//			playerGC.translate(player.getPos().getX() + FRAME_WIDTH * playerSizeMultiplier, player.getPos().getY()); // Move to player's
-//																									// position
-//			playerGC.scale(-1, 1); // Flip horizontally
-//			playerGC.drawImage(spriteImages[3], walkFrame[0] * FRAME_WIDTH, 0, FRAME_WIDTH, FRAME_HEIGHT, 0, 0,
-//					FRAME_WIDTH * playerSizeMultiplier, FRAME_HEIGHT * playerSizeMultiplier);
-//
-//		} 
-//		else {
-//			walkAnimation.stop();
-//			idleAnimation.play();
-//		}
-//
-//		if (pressedKeys.contains(KeyCode.S) && !player.hasState(PlayerState.JUMPING)) {
-//			player.crouch();
-//			crouchAnimation.play();
-//			playerGC.drawImage(spriteImages[4], crouchFrame[0] * FRAME_WIDTH, 0, FRAME_WIDTH, FRAME_HEIGHT,
-//					player.getPos().getX(), player.getPos().getY(), FRAME_WIDTH * playerSizeMultiplier,
-//					FRAME_HEIGHT * playerSizeMultiplier);
-//		} else {
-//			player.stopCrouching();
-//		}
-//
-//		if (pressedKeys.contains(KeyCode.SPACE) && !player.hasState(PlayerState.ATTACKING)) {
-//			player.setAttackIndex(((player.getAttackIndex() + 1) % 2));
-//			player.attack(); // Set attacking state
-//			idleAnimation.pause(); // Pause idle animation
-//			attackFrame[0] = 0; // Reset attack frame
-//			attackAnimation.play(); // Play attack animation
-//		}
-//
-//		if (!player.hasState(PlayerState.ATTACKING)) {
-//			swordSwingAudio.stop();
-//			attackAnimation.stop();
-//			attackFrame[0] = 0;
-//		} else {
-//			if (player.hasState(PlayerState.JUMPING)) {
-//				playerGC.drawImage(spriteImages[7 + player.getAttackIndex()], attackFrame[0] * 80, 0, 80, FRAME_HEIGHT,
-//						player.getPos().getX() - 40, player.getPos().getY(), 80 * playerSizeMultiplier,
-//						FRAME_HEIGHT * playerSizeMultiplier);
-//			} else {
-//				playerGC.drawImage(spriteImages[player.getAttackIndex() + 1], attackFrame[0] * 80, 0, 80, FRAME_HEIGHT,
-//						player.getPos().getX() - 40, player.getPos().getY(), 80 * playerSizeMultiplier,
-//						FRAME_HEIGHT * playerSizeMultiplier);
-//			}
-//		}
-//
-//		if (attackFrame[0] >= 8) {
-//			attackFrame[0] = 0; // Reset attack frame index
-//			player.stopAttacking(); // Reset attack state
-//			attackAnimation.stop(); // Stop the attack animation
-//			swordSwingAudio.stop();
-//		} else if (attackFrame[0] == 0 && player.hasState(PlayerState.ATTACKING)) {
-//			swordSwingAudio.play();
-//		}
-//
-//		if (player.hasStateCombination(PlayerState.JUMPING, PlayerState.ATTACKING)) {
-//			// Check if player is jumping or falling based on vertical velocity
-//			if (verticalVelocity < 0) { // Jumping
-//				playerGC.drawImage(spriteImages[5], 0, 0, FRAME_WIDTH, FRAME_HEIGHT, player.getPos().getX(), player.getPos().getY(),
-//						FRAME_WIDTH * playerSizeMultiplier, FRAME_HEIGHT * playerSizeMultiplier); // Jump sprite
-//			} else { // Falling
-//				playerGC.drawImage(spriteImages[6], 0, 0, FRAME_WIDTH, FRAME_HEIGHT, player.getPos().getX(), player.getPos().getY(),
-//						FRAME_WIDTH * playerSizeMultiplier, FRAME_HEIGHT * playerSizeMultiplier); // Fall sprite
-//			}
-//		}
-//		playerGC.restore(); // Restore the state
-//	}
 
 	public static void main(String[] args) {
 		launch();

@@ -7,8 +7,9 @@ public class Enemy implements ICharacter{
 	private Position pos;
 	private Boolean isSpawning = true;
 	
-	public Enemy(int health) {
+	public Enemy(int health, Position pos) {
 		this.health = 1000;
+		this.pos = pos;
 	}
 
 	@Override

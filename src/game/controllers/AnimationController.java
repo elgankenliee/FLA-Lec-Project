@@ -8,7 +8,6 @@ import game.core.animations.IAnimation;
 public class AnimationController {
 	private final Map<Integer, IAnimation> animations; 
   private IAnimation currentAnimation;
-  
 
   public AnimationController() {
     	this.animations = new HashMap<>();    	
@@ -25,8 +24,8 @@ public class AnimationController {
   }
 
   public void setCurrentAnimation(int state) {
-      currentAnimation = animations.get(state);
-      currentAnimation.start();
+    currentAnimation = animations.get(state);
+    currentAnimation.start();
   }
 
   public IAnimation getCurrentAnimation() {
