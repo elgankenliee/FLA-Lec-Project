@@ -1,27 +1,22 @@
 package game.managers;
 
 import game.controllers.AnimationController;
+import game.controllers.NPCMovementController;
 import game.core.animations.IAnimation;
 import game.core.animations.CharacterAnimation;
 import game.core.interfaces.FXBehaviour;
-import game.core.models.Vector2D;
 import game.core.models.entities.Enemy;
-import game.core.models.entities.Player;
-import game.core.physics.PhysicsEngine;
 
 public class EnemyManager implements FXBehaviour{
 
   private Enemy enemy;
-  private PhysicsEngine physics;
-  private Vector2D delta;
-  
+  private NPCMovementController movementController;
   private AnimationController animationController;
   
   
   public EnemyManager(Enemy enemy) {
     this.enemy = enemy;
-    this.physics = new PhysicsEngine();
-    this.delta = new Vector2D(0, 0);
+    this.movementController = new NPCMovementController(enemy.getRb());
     this.animationController = new AnimationController();
     
     start();
@@ -35,6 +30,7 @@ public class EnemyManager implements FXBehaviour{
 
   @Override
   public void update() {
+    movementController.update(enemy.getPos());
     animationController.update(System.currentTimeMillis());
   }
   

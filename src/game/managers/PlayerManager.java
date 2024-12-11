@@ -9,11 +9,9 @@ import game.core.animations.CharacterAnimation;
 import game.core.constants.PlayerState;
 import game.core.interfaces.FXBehaviour;
 import game.core.models.entities.Player;
-import game.core.physics.PhysicsEngine;
 import javafx.scene.input.KeyCode;
 
 public class PlayerManager implements FXBehaviour {
-	private PhysicsEngine physics;
   private final Player player;
   private int stateCache = 1;
   private Input input;
@@ -22,16 +20,13 @@ public class PlayerManager implements FXBehaviour {
 	private final AnimationController animationController;
 
   public PlayerManager(Player player) {
-
-    this.physics = new PhysicsEngine();
     this.player = player;
     this.input = Input.getInstance();
-    this.movementController = new MovementController();
+    this.movementController = new MovementController(player.getRb());
     this.animationController = new AnimationController();
 
     start();
   }
-  
   
   @Override
   public void start() {
@@ -54,7 +49,6 @@ public class PlayerManager implements FXBehaviour {
   
   private void handleMovement() {
     movementController.update(
-      physics,
       player.getPos()
     );
   }
@@ -77,7 +71,7 @@ public class PlayerManager implements FXBehaviour {
       return;
     }
     
-    if (movementController.getDelta().getY() > 1) {
+    if (player.getRb().getDelta().getY() > 1) {
       player.setState(PlayerState.FALLING);
       return;
     }

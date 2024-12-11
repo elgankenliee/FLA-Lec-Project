@@ -322,8 +322,8 @@ public class Main extends Application {
     IAnimation enemyAnimation = enemyManager.getCurrentAnimation();
     
     draw(playerGC, playerAnimation, player.getPos(), playerManager.getDirection());
-//    int enemyDirection = (enemy.getPos().getX() > player.getPos().getX()) ? 1 : -1;
-//    draw(enemyGC, enemyAnimation, enemy.getPos(), enemyDirection);
+    int enemyDirection = (enemy.getPos().getX() > player.getPos().getX()) ? 1 : -1;
+    draw(enemyGC, enemyAnimation, enemy.getPos(), enemyDirection);
     
     parallax();
 	}

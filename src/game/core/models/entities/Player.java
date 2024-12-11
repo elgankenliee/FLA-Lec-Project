@@ -1,16 +1,19 @@
 package game.core.models.entities;
 
 import game.core.models.Vector2D;
+import game.core.physics.RigidBody;
 
 public class Player implements ICharacter{
 	private int health;
 	private Vector2D pos;
+	private RigidBody rb;
 	private int state; // Bitmask for states
 	private int attackIndex; // Attack index for combos
 	
 	public Player(int health, Vector2D pos, int state) {
 		this.health = health;
 		this.pos = pos;
+		this.rb = new RigidBody(new Vector2D(20,50));
 		this.state = state;
 		this.attackIndex = 1;
 	}
@@ -81,6 +84,10 @@ public class Player implements ICharacter{
 	
 	public int getAttackIndex() {
 		return this.attackIndex;
+	}
+	
+	public RigidBody getRb() {
+	  return this.rb;
 	}
 
 }
