@@ -1,8 +1,6 @@
 package game.managers;
 
 
-import java.util.HashSet;
-import java.util.Set;
 
 import game.controllers.AnimationController;
 import game.controllers.MovementController;
@@ -10,7 +8,6 @@ import game.core.animations.IAnimation;
 import game.core.animations.CharacterAnimation;
 import game.core.constants.PlayerState;
 import game.core.interfaces.FXBehaviour;
-import game.core.models.Position;
 import game.core.models.entities.Player;
 import game.core.physics.PhysicsEngine;
 import javafx.scene.input.KeyCode;
@@ -18,10 +15,8 @@ import javafx.scene.input.KeyCode;
 public class PlayerManager implements FXBehaviour {
 	private PhysicsEngine physics;
   private final Player player;
-  private Set<KeyCode> pressedKeys;
-  private Position delta;
-  private int facingDirection = 1;
   private int stateCache = 1;
+  private Input input;
     
 	private final MovementController movementController;
 	private final AnimationController animationController;
@@ -30,10 +25,9 @@ public class PlayerManager implements FXBehaviour {
 
     this.physics = new PhysicsEngine();
     this.player = player;
-    this.pressedKeys = new HashSet<>();
+    this.input = Input.getInstance();
     this.movementController = new MovementController();
     this.animationController = new AnimationController();
-    this.delta = new Position(0,0);
 
     start();
   }
@@ -59,16 +53,10 @@ public class PlayerManager implements FXBehaviour {
   
   
   private void handleMovement() {
-    delta = movementController.update(
-      pressedKeys,
+    movementController.update(
       physics,
       player.getPos()
     );
-
-    if (delta.getX() != 0) {
-      facingDirection = (delta.getX() > 0) ? 1 : -1;
-    }
-    player.move(delta.getX(), delta.getY());
   }
   
   private void handleAnimation() {
@@ -82,28 +70,27 @@ public class PlayerManager implements FXBehaviour {
   }
 
   private void handleInput() {
-      
     player.resetState();
     
-    if(pressedKeys.contains(KeyCode.SPACE)) {
+    if(input.getKey(KeyCode.SPACE)) {
       player.setState(PlayerState.ATTACKING);
       return;
     }
     
-    if (delta.getY() > 1) {
+    if (movementController.getDelta().getY() > 1) {
       player.setState(PlayerState.FALLING);
       return;
     }
 
-    if (pressedKeys.contains(KeyCode.W)) {
+    if (input.getKey(KeyCode.W)) {
       player.setState(PlayerState.JUMPING);
       return;
     }
 
-    if (pressedKeys.contains(KeyCode.A)) {
+    if (input.getKey(KeyCode.A)) {
       player.setState(PlayerState.WALKING);
     }
-    else if (pressedKeys.contains(KeyCode.D)) {
+    else if (input.getKey(KeyCode.D)) {
       player.setState(PlayerState.WALKING);
     }
     else{
@@ -111,26 +98,12 @@ public class PlayerManager implements FXBehaviour {
     }
   }
   
-  public void addKeyPressed(KeyCode keyPressed) {
-    pressedKeys.add(keyPressed);
-  }
-  
-  public void removeKeyPressed(KeyCode keyPressed) {
-    pressedKeys.remove(keyPressed);
-  }
-  
   public IAnimation getCurrentAnimation() {
     return this.animationController.getCurrentAnimation();
   }
   
   public int getDirection() {
-    return this.facingDirection;
+    return movementController.getDirection();
   }
 
-
-@Override
-public void update(Player player) {
-	// TODO Auto-generated method stub
-	
-}
 }

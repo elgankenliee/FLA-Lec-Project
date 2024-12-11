@@ -1,45 +1,50 @@
 package game.core.physics;
 
-import game.core.interfaces.PhysicsBoundaryHandler;
-import game.core.models.Position;
+import game.core.models.Vector2D;
 
 public class PhysicsEngine {
-  private final Position leftBoundary;
-  private final Position rightBoundary;
+  private final Vector2D leftBoundary;
+  private final Vector2D rightBoundary;
   private final double friction;
   private final double gravity;
 
   public PhysicsEngine() {
-    this.leftBoundary = new Position(300, 580);       
-    this.rightBoundary = new Position(1300, 0); 
+    this.leftBoundary = new Vector2D(300, 800);       
+    this.rightBoundary = new Vector2D(1300, 0); 
     this.friction = 1.5;
     this.gravity = 2;
   }
 
-  public boolean inbound(Position pos, double dx, double dy, PhysicsBoundaryHandler boundaryHandler) {
-    double newX = pos.getX() + dx;
-    double newY = pos.getY() + dy;
+  public boolean applyBoundaryLimits(Vector2D pos, Vector2D delta) {
+    double newX = pos.getX() + delta.getX();
+    double newY = pos.getY() + delta.getY();
 
     boolean xBound = newX >= leftBoundary.getX() && newX <= rightBoundary.getX();
     boolean yBound = newY >= rightBoundary.getY() && newY <= leftBoundary.getY();
-    
-    boundaryHandler.handle(xBound, yBound);
+
+    if (!xBound) {
+        delta.setX(0);
+    }
+
+    if (!yBound && newY > leftBoundary.getY()) {
+        delta.setY(leftBoundary.getY() - pos.getY());
+    }
 
     return xBound && yBound;
+}
+  
+  public void applyFriction(Vector2D velocity) {
+    if (velocity.getX() < 0.1) {
+      velocity.setX(0);
+    }
+    else if(velocity.getX() > 0) {
+      velocity.updateX(-friction);
+    }
+
   }
   
-  public double applyFriction(double velocity) {
-    if (Math.abs(velocity) < 0.1) {
-        return 0;
-    }
-    if(velocity > 0) {
-      return velocity - this.friction;
-    }
-    return velocity + this.friction;
-  }
-  
-  public double applyGravity(double velocity) {
-    return velocity + this.gravity;
+  public void applyGravity(Vector2D velocity) {
+    velocity.updateY(this.gravity);
   }
   
   public double getGroundBoundary() {

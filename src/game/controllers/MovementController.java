@@ -2,41 +2,52 @@ package game.controllers;
 
 import java.util.Set;
 
-import game.core.models.Position;
+import game.core.models.Vector2D;
 import game.core.physics.PhysicsEngine;
+import game.managers.Input;
 import javafx.scene.input.KeyCode;
+
+/*
+ * Velocity:
+ *  X: positive value, direction determined by another variable
+ *  Y: positive and negative value, determining the direction because why not
+ */
 
 public class MovementController {
   private final int acceleration;
-  private Position velocity;
-	private final Position terminalVelocity;
+  private Vector2D velocity; 
+  private Vector2D delta;
+  private int direction;
+	private final Vector2D terminalVelocity;
 	private final double jumpStrength;
-
+	private Input input;
 
   public MovementController() {
-    this.velocity = new Position(0,0);
     this.acceleration = 3;
-    this.terminalVelocity = new Position(15, 50);
+    this.velocity = new Vector2D(0,0);
+    this.delta = new Vector2D(0, 0);
+    this.direction = 1;
+    this.terminalVelocity = new Vector2D(15, 50);
     this.jumpStrength = 30;
+    this.input = Input.getInstance();
   }
     
-    
-  public Position update(
-		Set<KeyCode> pressedKeys,
+  public void update(
 		PhysicsEngine physics,
-		Position currentPos
+		Vector2D pos
   ) {
-    	Position delta = new Position(0,0);
     	
-      if (pressedKeys.contains(KeyCode.A)) {
-        velocity.updateX(-acceleration);
-      } 
-      else if (pressedKeys.contains(KeyCode.D)) {
+      if (input.getKey(KeyCode.A)) {
         velocity.updateX(acceleration);
+        direction = -1;
+      } 
+      else if (input.getKey(KeyCode.D)) {
+        velocity.updateX(acceleration);
+        direction = 1;
       }
         
-      velocity.setX(physics.applyFriction(velocity.getX()));
-      
+      physics.applyFriction(velocity);
+            
       velocity.setX(
         Math.max(
           -terminalVelocity.getX(),
@@ -44,10 +55,10 @@ public class MovementController {
         )
       );
         
-      if(currentPos.getY() < physics.getGroundBoundary()) {
-        velocity.updateY(physics.applyGravity(delta.getY()));
+      if(pos.getY() < physics.getGroundBoundary()) {
+        physics.applyGravity(velocity);
       }
-      else if (pressedKeys.contains(KeyCode.W)){
+      else if (input.getKey(KeyCode.W)){
         velocity.setY(-jumpStrength);
       }
         
@@ -57,21 +68,23 @@ public class MovementController {
           Math.min(velocity.getY(), terminalVelocity.getY())
         )
       );
-        
-      delta.set(velocity.getX(), velocity.getY());
+      
+      double directionalDeltaX =  direction * velocity.getX();
+      delta.set(directionalDeltaX, velocity.getY());
                 
-      physics.inbound(
-    		currentPos, 
-    		delta.getX(), 
-    		delta.getY(), 
-    		(xBound, yBound) -> {
-    			if (!xBound) delta.setX(0);
-          if (!yBound && currentPos.getY() >= physics.getGroundBoundary()) {
-            delta.setY(0);
-          }
-        }
-      );
+      physics.applyBoundaryLimits(pos, delta);
         
-      return delta;
+      pos.update(delta.getX(), delta.getY());
+      
+//      System.out.println("x :" + pos.getX() +  " | y:" + pos.getY());
+  }
+  
+  
+  public Vector2D getDelta() {
+    return this.delta;
+  }
+  
+  public int getDirection() {
+    return this.direction;
   }
 }

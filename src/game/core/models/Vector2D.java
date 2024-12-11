@@ -1,11 +1,11 @@
 package game.core.models;
 
-public class Position {
+public class Vector2D {
 	
 	private double x;
 	private double y;
 
-	public Position(double x, double y) {
+	public Vector2D(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
@@ -14,6 +14,11 @@ public class Position {
 		this.x = x;
 		this.y = y;
 	}
+	
+	public void update(double x, double y) {
+    this.x += x;
+    this.y += y;
+  }
 
 	public double getX() {
 		return x;

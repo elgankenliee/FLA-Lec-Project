@@ -1,14 +1,14 @@
 package game.core.models.entities;
 
-import game.core.models.Position;
+import game.core.models.Vector2D;
 
 public class Player implements ICharacter{
 	private int health;
-	private Position pos;
+	private Vector2D pos;
 	private int state; // Bitmask for states
 	private int attackIndex; // Attack index for combos
 	
-	public Player(int health, Position pos, int state) {
+	public Player(int health, Vector2D pos, int state) {
 		this.health = health;
 		this.pos = pos;
 		this.state = state;
@@ -16,17 +16,11 @@ public class Player implements ICharacter{
 	}
 
 	@Override
-	public void move(double x, double y) {
-		this.pos.updateX(x);
-		this.pos.updateY(y);
-	}
-
-	@Override
 	public void spawn() {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
 	public void die() {
 		// TODO Auto-generated method stub
@@ -59,7 +53,7 @@ public class Player implements ICharacter{
     this.health = health;
   }
     
-	public void setPos(Position pos) {
+	public void setPos(Vector2D pos) {
 		this.pos = pos;
 	}
     
@@ -77,7 +71,7 @@ public class Player implements ICharacter{
   }
     
 	@Override
-	public Position getPos() {
+	public Vector2D getPos() {
 		return this.pos;
 	}
 	
@@ -88,4 +82,5 @@ public class Player implements ICharacter{
 	public int getAttackIndex() {
 		return this.attackIndex;
 	}
+
 }

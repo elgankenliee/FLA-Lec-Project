@@ -8,10 +8,11 @@ import game.controllers.MovementController;
 import game.core.animations.IAnimation;
 import game.core.animations.CharacterAnimation;
 import game.core.constants.PlayerState;
-import game.core.models.Position;
+import game.core.models.Vector2D;
 import game.core.models.entities.Enemy;
 import game.core.models.entities.Player;
 import game.managers.EnemyManager;
+import game.managers.Input;
 import game.managers.PlayerManager;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
@@ -64,7 +65,7 @@ public class Main extends Application {
 
 	private Player player = new Player(
 		1000,
-	  new Position(350, 580),
+	  new Vector2D(640, 600),
 		PlayerState.IDLE
 	);
 	private PlayerManager playerManager = new PlayerManager(player);
@@ -72,10 +73,12 @@ public class Main extends Application {
 
 	private Enemy enemy = new Enemy(
     1000,
-    new Position(640, 340)
+    new Vector2D(640, 800)
   );
 	
 	private EnemyManager enemyManager = new EnemyManager(enemy);
+	
+	private Input input = Input.getInstance();
 
 	// Background pane setup
 	private StackPane bgPane = new StackPane();
@@ -237,7 +240,7 @@ public class Main extends Application {
 		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Loop the video
 
 		mediaPlayer.play(); // Start playing the video
-		backgroundMusic.play();
+//		backgroundMusic.play();
 
 		window.setScene(gameScene);
 		window.setFullScreen(true);
@@ -249,11 +252,11 @@ public class Main extends Application {
 	// =======
 	private void start() {
 	  gameScene.setOnKeyPressed(event -> {
-      playerManager.addKeyPressed(event.getCode());
+      input.pressKey(event.getCode());
       
     });
     gameScene.setOnKeyReleased(event -> {
-      playerManager.removeKeyPressed(event.getCode());
+      input.releaseKey(event.getCode());
     });
     
     AnimationTimer gameLoop = new AnimationTimer() {
@@ -273,43 +276,37 @@ public class Main extends Application {
 	}
 
 	private void draw(
-		    GraphicsContext gc,
-		    IAnimation animation, 
-		    Position pos,
-		    int direction
-		) {
-		    if (animation == null) return;
+	    GraphicsContext gc,
+	    IAnimation animation, 
+	    Vector2D pos,
+	    int direction
+	) {
+	    if (animation == null) return;
 
-		    final int cropWidth = animation.getCropWidth();
-		    final int cropHeight = animation.getCropHeight();
+	    int deltaX = animation.getCropWidth();
+	    int deltaY = animation.getCropHeight(); 
+	    int startX = animation.getCurrentFrame() * deltaX;
+	    int startY = 0; 
 
-		    int frameX = animation.getCurrentFrame() * cropWidth;
-		    int width = cropWidth;
+	    int adjustedWidth = deltaX; 
 
-		    // Flip horizontally if direction < 0
-		    if (direction < 0) {
-		        frameX += cropWidth;
-		        width = -width;
-		    }
+	    if (direction < 0) {
+	        startX += deltaX;
+	        adjustedWidth = -deltaX;
+	    }
 
-		    double offsetX = 0; //-120  Adjust horizontal offset (negative moves left)
-		    double offsetY = 0; //-100  Adjust vertical offset (negative moves up)
+	    gc.drawImage(
+	        animation.getSpriteImage(),
+	        startX, startY, 
+	        adjustedWidth, deltaY,
+	        pos.getX(), pos.getY() - deltaY * 4, 
+	        deltaX * 4, deltaY * 4
+	    );
 
-		    double adjustedX = pos.getX() + offsetX;
-		    double adjustedY = pos.getY() - cropHeight + offsetY;
-
-		    gc.drawImage(
-		        animation.getSpriteImage(),
-		        frameX, 0, width, cropHeight,    // Crop source
-		        adjustedX, adjustedY,           // Target position
-		        cropWidth * 4,                  // Scale X
-		        cropHeight * 4                  // Scale Y
-		    );
-//		    // Debug marker
-//		    gc.setFill(Color.RED);
-//		    gc.fillRect(pos.getX() - 5, pos.getY() - 5, 10, 10); 
+	    gc.setFill(Color.RED);
+	    gc.fillRect(pos.getX(), pos.getY(), 5, 5);
 	}
-	
+    
 	
 	private void parallax() {
     gameContainer.setTranslateX((-player.getPos().getX() * 0.2) + 140);
@@ -325,17 +322,17 @@ public class Main extends Application {
     IAnimation enemyAnimation = enemyManager.getCurrentAnimation();
     
     draw(playerGC, playerAnimation, player.getPos(), playerManager.getDirection());
-    int enemyDirection = (enemy.getPos().getX() > player.getPos().getX()) ? 1 : -1;
-    draw(enemyGC, enemyAnimation, enemy.getPos(), enemyDirection);
+//    int enemyDirection = (enemy.getPos().getX() > player.getPos().getX()) ? 1 : -1;
+//    draw(enemyGC, enemyAnimation, enemy.getPos(), enemyDirection);
     
     parallax();
 	}
 	
 	private void update() {
 		playerManager.update();
-		enemyManager.update(player);
-		
-		 playerHealthLabel.setText("Player Health: " + player.getHealth());
+		enemyManager.update();
+				
+		playerHealthLabel.setText("Player Health: " + player.getHealth());
 	}
 
 

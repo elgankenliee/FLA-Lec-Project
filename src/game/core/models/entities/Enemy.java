@@ -1,22 +1,17 @@
 package game.core.models.entities;
 
-import game.core.models.Position;
+import game.core.models.Vector2D;
 
 public class Enemy implements ICharacter{
 	private int health;
-	private Position pos;
+	private Vector2D pos;
 	private Boolean isSpawning = true;
 	
-	public Enemy(int health, Position pos) {
+	public Enemy(int health, Vector2D pos) {
 		this.health = 1000;
 		this.pos = pos;
 	}
-
-	@Override
-	public void move(double x, double y) {
-		this.pos.updateX(x);
-		this.pos.updateY(y);
-	}
+	
 	@Override
 	public void spawn() {
 		// TODO Auto-generated method stub
@@ -30,11 +25,11 @@ public class Enemy implements ICharacter{
 	}
 
 	@Override
-	public Position getPos() {
+	public Vector2D getPos() {
 		return this.pos;
 	}
 	
-	public void setPos(Position pos) {
+	public void setPos(Vector2D pos) {
 		this.pos = pos;
 	}
 

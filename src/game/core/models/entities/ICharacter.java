@@ -1,11 +1,9 @@
 package game.core.models.entities;
 
-import game.core.models.Position;
+import game.core.models.Vector2D;
 
 public interface ICharacter {
-	public void move(double x, double y);
-	public Position getPos();
-	
+	public Vector2D getPos();
 	public void spawn();
 	public void die();
 }
