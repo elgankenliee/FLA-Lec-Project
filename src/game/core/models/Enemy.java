@@ -10,7 +10,7 @@ public class Enemy implements ICharacter{
 	public Enemy(int health, Vector2D pos) {
 		this.health = 1000;
 		this.pos = pos;
-		this.rb = new RigidBody(new Vector2D(20, 50));
+		this.rb = new RigidBody(new Vector2D(100, 50));
 	}
 	
 	@Override

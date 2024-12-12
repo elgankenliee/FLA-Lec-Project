@@ -15,7 +15,7 @@ public class PhysicsEngine {
     private PhysicsEngine() {
         this.friction = 1.5;
         this.gravity = 2;
-        this.marginError = 0.1;
+        this.marginError = 0.5;
     }
 
     public static PhysicsEngine getInstance() {
@@ -46,7 +46,7 @@ public class PhysicsEngine {
     public void applyFriction(Vector2D velocity) {
       double vx = velocity.getX();
       
-      if (Math.abs(vx) < marginError) {
+      if (Math.abs(vx) < friction) {
           velocity.setX(0);
       } 
       else {

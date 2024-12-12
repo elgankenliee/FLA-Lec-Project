@@ -1,26 +1,22 @@
 package game.core.states.boss;
 
+import game.core.constants.BossStateEnum;
 import game.core.constants.Vector;
 import game.core.interfaces.BossContext;
 
-public class LevitateSpawnState implements BossState {
+public class AttackPreDash implements BossState{
 
-  private final double initialBoost = 0.1f;
   @Override
   public void start(BossContext context) {
-    context.setAnimation(2);
-    
+    context.setAnimation(BossStateEnum.ATTACK | BossStateEnum.PRE_DASH);
   }
 
   @Override
   public void update(BossContext context) {
-    if (context.getAnimationCycleCount() > 0) {
-      context.changeState(new LevitateState());
+    context.addForce(2 * (context.getDirection() * -1), Vector.X);
+    if(context.getAnimationCycleCount() > 0 ) {
+      context.changeState(new AttackDashState());
     }
-    else {
-      context.addForce((2 + initialBoost) * Vector.UP, Vector.Y);
-    }
-    
   }
 
   @Override
@@ -28,6 +24,5 @@ public class LevitateSpawnState implements BossState {
     // TODO Auto-generated method stub
     
   }
-
 
 }

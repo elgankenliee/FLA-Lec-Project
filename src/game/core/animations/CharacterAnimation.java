@@ -53,6 +53,7 @@ public class CharacterAnimation implements IAnimation{
 
   @Override
   public void start() {
+    this.cyclesCompleted = 0;
   }
   
   @Override

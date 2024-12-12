@@ -1,6 +1,5 @@
 package game.core.physics;
 
-import game.core.constants.Vector;
 import game.core.models.Vector2D;
 
 

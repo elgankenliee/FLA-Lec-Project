@@ -6,12 +6,13 @@ import game.controllers.AnimationController;
 import game.controllers.MovementController;
 import game.core.animations.IAnimation;
 import game.core.animations.CharacterAnimation;
-import game.core.constants.PlayerState;
+import game.core.constants.PlayerStateEnum;
+import game.core.interfaces.ContextualMovement;
 import game.core.interfaces.FXBehaviour;
 import game.core.models.Player;
 import javafx.scene.input.KeyCode;
 
-public class PlayerManager implements FXBehaviour {
+public class PlayerManager implements FXBehaviour, ContextualMovement {
   private final Player player;
   private int stateCache = 1;
   private Input input;
@@ -30,13 +31,13 @@ public class PlayerManager implements FXBehaviour {
   
   
   private void initializeAnimations() {
-    animationController.addAnimation(PlayerState.IDLE, new CharacterAnimation("src/assets/sprite/player/player_idleedited.png", 4, 150));
-    animationController.addAnimation(PlayerState.WALKING, new CharacterAnimation("src/assets/sprite/player/player_walk.png", 8, 45));
-    animationController.addAnimation(PlayerState.JUMPING, new CharacterAnimation("src/assets/sprite/player/player_jump.png", 4, 200));
-    animationController.addAnimation(PlayerState.FALLING, new CharacterAnimation("src/assets/sprite/player/player_fall.png", 2, 150));
-    animationController.addAnimation(PlayerState.ATTACKING, new CharacterAnimation("src/assets/sprite/player/player_attack_1.png", 8, 23, 80, 60));
-    animationController.addAnimation(PlayerState.ATTACKING + 1, new CharacterAnimation("src/assets/sprite/player/player_attack_2.png", 8, 23, 80, 60));
-    animationController.setCurrentAnimation(PlayerState.IDLE);
+    animationController.addAnimation(PlayerStateEnum.IDLE, new CharacterAnimation("src/assets/sprite/player/player_idleedited.png", 4, 150));
+    animationController.addAnimation(PlayerStateEnum.WALKING, new CharacterAnimation("src/assets/sprite/player/player_walk.png", 8, 45));
+    animationController.addAnimation(PlayerStateEnum.JUMPING, new CharacterAnimation("src/assets/sprite/player/player_jump.png", 4, 200));
+    animationController.addAnimation(PlayerStateEnum.FALLING, new CharacterAnimation("src/assets/sprite/player/player_fall.png", 2, 150));
+    animationController.addAnimation(PlayerStateEnum.ATTACKING, new CharacterAnimation("src/assets/sprite/player/player_attack_1.png", 8, 23, 80, 60));
+    animationController.addAnimation(PlayerStateEnum.ATTACKING + 1, new CharacterAnimation("src/assets/sprite/player/player_attack_2.png", 8, 23, 80, 60));
+    animationController.setCurrentAnimation(PlayerStateEnum.IDLE);
   }
   
   @Override
@@ -44,6 +45,16 @@ public class PlayerManager implements FXBehaviour {
     handleInput();
     handleMovement();
     handleAnimation();
+  }
+  
+  @Override
+  public void addForce(double force, int direction) {
+    movementController.addForce(force, direction);
+  }
+  
+  @Override
+  public int getDirection() {
+    return movementController.getDirection();
   }
   
   
@@ -67,28 +78,28 @@ public class PlayerManager implements FXBehaviour {
     player.resetState();
     
     if(input.getKey(KeyCode.SPACE)) {
-      player.setState(PlayerState.ATTACKING);
+      player.setState(PlayerStateEnum.ATTACKING);
       return;
     }
     
     if (player.getRb().getDelta().getY() > 1) {
-      player.setState(PlayerState.FALLING);
+      player.setState(PlayerStateEnum.FALLING);
       return;
     }
 
     if (input.getKey(KeyCode.W)) {
-      player.setState(PlayerState.JUMPING);
+      player.setState(PlayerStateEnum.JUMPING);
       return;
     }
 
     if (input.getKey(KeyCode.A)) {
-      player.setState(PlayerState.WALKING);
+      player.setState(PlayerStateEnum.WALKING);
     }
     else if (input.getKey(KeyCode.D)) {
-      player.setState(PlayerState.WALKING);
+      player.setState(PlayerStateEnum.WALKING);
     }
     else{
-      player.setState(PlayerState.IDLE);
+      player.setState(PlayerStateEnum.IDLE);
     }
   }
   
@@ -96,8 +107,6 @@ public class PlayerManager implements FXBehaviour {
     return this.animationController.getCurrentAnimation();
   }
   
-  public int getDirection() {
-    return movementController.getDirection();
-  }
+
 
 }

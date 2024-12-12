@@ -4,20 +4,23 @@ import game.core.constants.BossStateEnum;
 import game.core.constants.Vector;
 import game.core.interfaces.BossContext;
 
-public class LevitateState implements BossState {
-    
+public class AttackDashState implements BossState{
+
+  private boolean dashed;
   @Override
   public void start(BossContext context) {
-    context.setAnimation(BossStateEnum.LEVITATE);
+    this.dashed = false;
+    context.setAnimation(BossStateEnum.ATTACK | BossStateEnum.DASH);
   }
 
   @Override
   public void update(BossContext context) {
-
-    if(context.getAnimationCycleCount() <= 3) {
-      context.addForce(2 * Vector.UP, Vector.Y);
+    if(!dashed) {
+      context.addForce(60 * context.getDirection(), Vector.X);
+      dashed = true;
     }
-    if (context.getAnimationCycleCount() > 3) {
+    
+    if(context.getAnimationCycleCount() > 6) {   
       context.changeState(new IdleState());
     }
     
@@ -25,6 +28,8 @@ public class LevitateState implements BossState {
 
   @Override
   public void exit(BossContext context) {
-    // Cleanup if needed
+    // TODO Auto-generated method stub
+    
   }
+
 }

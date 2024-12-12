@@ -4,7 +4,8 @@ package main;
 import game.UIFactory;
 
 import game.core.animations.IAnimation;
-import game.core.constants.PlayerState;
+import game.core.constants.PlayerStateEnum;
+import game.core.constants.Vector;
 import game.core.models.Enemy;
 import game.core.models.Player;
 import game.core.models.Vector2D;
@@ -58,7 +59,7 @@ public class Main extends Application {
 	private Player player = new Player(
 		1000,
 	  new Vector2D(640, 600),
-		PlayerState.IDLE
+		PlayerStateEnum.IDLE
 	);
 	private PlayerManager playerManager = new PlayerManager(player);
 	private Label playerHealthLabel = UIFactory.makeLabel("Player Health: " + player.getHealth(), 10);
@@ -314,7 +315,10 @@ public class Main extends Application {
     IAnimation enemyAnimation = enemyManager.getCurrentAnimation();
     
     draw(playerGC, playerAnimation, player.getPos(), playerManager.getDirection());
-    int enemyDirection = (enemy.getPos().getX() > player.getPos().getX()) ? 1 : -1;
+    int enemyDirection = (enemy.getPos().getX() > player.getPos().getX()) ? Vector.RIGHT : Vector.LEFT;
+    
+    enemyManager.setDirection(enemyDirection * -1);
+    
     draw(enemyGC, enemyAnimation, enemy.getPos(), enemyDirection);
     
     parallax();

@@ -17,9 +17,9 @@ public class MovementController extends RigidBodyController {
 
   public MovementController(RigidBody rb) {
     super(rb);
-    this.acceleration = 3;
+    this.acceleration = 5;
     this.rb = rb;
-    this.jumpStrength = 30;
+    this.jumpStrength = 40;
     this.input = Input.getInstance();
     this.direction = Vector.LEFT;
 
@@ -27,23 +27,23 @@ public class MovementController extends RigidBodyController {
  
   @Override
   public void update(Vector2D pos) {
-      if (input.getKey(KeyCode.A)) {
-          rb.getVelocity().updateX(acceleration * Vector.LEFT);
-          direction = Vector.LEFT;
-      } 
-      else if (input.getKey(KeyCode.D)) {
-          rb.getVelocity().updateX(acceleration * Vector.RIGHT);
-          direction = Vector.RIGHT;
-      }
+    if (input.getKey(KeyCode.A)) {
+        rb.getVelocity().updateX(acceleration * Vector.LEFT);
+        direction = Vector.LEFT;
+    } 
+    else if (input.getKey(KeyCode.D)) {
+        rb.getVelocity().updateX(acceleration * Vector.RIGHT);
+        direction = Vector.RIGHT;
+    }
 
-      if (input.getKey(KeyCode.W) && pos.getY() >= PhysicsEngine.getGroundBoundary()) {
-          rb.getVelocity().setY(-jumpStrength);
-      }
+    if (input.getKey(KeyCode.W) && pos.getY() >= PhysicsEngine.getGroundBoundary()) {
+        rb.getVelocity().setY(-jumpStrength);
+    }
 
-      rb.update(pos);
+    rb.update(pos);
   }
   
   public int getDirection() {
     return this.direction;
-}
+  }
 }
