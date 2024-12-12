@@ -8,7 +8,7 @@ import game.core.animations.IAnimation;
 import game.core.animations.CharacterAnimation;
 import game.core.constants.PlayerState;
 import game.core.interfaces.FXBehaviour;
-import game.core.models.entities.Player;
+import game.core.models.Player;
 import javafx.scene.input.KeyCode;
 
 public class PlayerManager implements FXBehaviour {
@@ -25,11 +25,11 @@ public class PlayerManager implements FXBehaviour {
     this.movementController = new MovementController(player.getRb());
     this.animationController = new AnimationController();
 
-    start();
+    initializeAnimations();
   }
   
-  @Override
-  public void start() {
+  
+  private void initializeAnimations() {
     animationController.addAnimation(PlayerState.IDLE, new CharacterAnimation("src/assets/sprite/player/player_idleedited.png", 4, 150));
     animationController.addAnimation(PlayerState.WALKING, new CharacterAnimation("src/assets/sprite/player/player_walk.png", 8, 45));
     animationController.addAnimation(PlayerState.JUMPING, new CharacterAnimation("src/assets/sprite/player/player_jump.png", 4, 200));

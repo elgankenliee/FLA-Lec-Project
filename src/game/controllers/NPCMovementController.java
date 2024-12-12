@@ -10,11 +10,8 @@ public class NPCMovementController extends RigidBodyController {
   }
 
   @Override
-  public void update(Vector2D pos) {
-    rb.getVelocity().updateX(1);
-    
+  public void update(Vector2D pos) {    
     rb.update(pos);
-    
   }
 
 }

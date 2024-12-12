@@ -8,21 +8,19 @@ public class PhysicsEngine {
     private static final Vector2D rightBoundary = new Vector2D(1300, 0);
     private final double friction;
     private final double gravity;
+    private final double marginError;
 
     private static PhysicsEngine instance;
 
     private PhysicsEngine() {
         this.friction = 1.5;
         this.gravity = 2;
+        this.marginError = 0.1;
     }
 
     public static PhysicsEngine getInstance() {
         if (instance == null) {
-            synchronized (PhysicsEngine.class) {
-                if (instance == null) { // Double-checked locking for thread safety
-                    instance = new PhysicsEngine();
-                }
-            }
+          instance = new PhysicsEngine();
         }
         return instance;
     }
@@ -46,12 +44,16 @@ public class PhysicsEngine {
     }
 
     public void applyFriction(Vector2D velocity) {
-        if (velocity.getX() < 0.1) {
-            velocity.setX(0);
-        } else if (velocity.getX() > 0) {
-            velocity.updateX(-friction);
-        }
-    }
+      double vx = velocity.getX();
+      
+      if (Math.abs(vx) < marginError) {
+          velocity.setX(0);
+      } 
+      else {
+          double force = (vx > 0) ? -friction : friction;
+          velocity.updateX(force);
+      }
+  }
 
     public void applyGravity(Vector2D velocity) {
         velocity.updateY(this.gravity);

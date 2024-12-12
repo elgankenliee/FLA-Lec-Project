@@ -1,6 +1,5 @@
-package game.core.models.entities;
+package game.core.models;
 
-import game.core.models.Vector2D;
 import game.core.physics.RigidBody;
 
 public class Player implements ICharacter{
