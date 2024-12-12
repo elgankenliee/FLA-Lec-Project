@@ -4,74 +4,95 @@ import game.controllers.AnimationController;
 import game.controllers.NPCMovementController;
 import game.core.animations.IAnimation;
 import game.core.animations.CharacterAnimation;
+import game.core.interfaces.BossContext;
 import game.core.interfaces.FXBehaviour;
-import game.core.models.entities.Enemy;
+import game.core.models.Enemy;
+import game.core.states.boss.BossState;
+import game.core.states.boss.SpawnLevitateState;
+import game.core.constants.*;
 
-public class EnemyManager implements FXBehaviour{
-
+public class EnemyManager extends BossContext implements FXBehaviour {
   private Enemy enemy;
   private NPCMovementController movementController;
   private AnimationController animationController;
-  
-  
+  private BossState currentState;
+
   public EnemyManager(Enemy enemy) {
     this.enemy = enemy;
     this.movementController = new NPCMovementController(enemy.getRb());
     this.animationController = new AnimationController();
-    
-    start();
+    initializeAnimations();
+    this.currentState = new SpawnLevitateState();
+    currentState.start(this);
   }
+  
+  public void initializeAnimations() {
+    animationController.addAnimation(BossStateEnum.SPAWN, new CharacterAnimation("src/assets/sprite/boss/boss_spawn.png", 6, 90, 120, 120));
+    animationController.addAnimation(BossStateEnum.LEVITATE, new CharacterAnimation("src/assets/sprite/boss/boss_levitate.png", 6, 90, 120, 120));
+    animationController.addAnimation(BossStateEnum.SPAWN | BossStateEnum.LEVITATE, new CharacterAnimation("src/assets/sprite/boss/boss_levitate_spawn.png", 5, 90, 120, 120));
+    animationController.addAnimation(BossStateEnum.IDLE, new CharacterAnimation("src/assets/sprite/boss/boss_idle.png", 8, 150, 120, 120));
+    animationController.addAnimation(BossStateEnum.ATTACK | BossStateEnum.SPIN, new CharacterAnimation("src/assets/sprite/boss/boss_spin.png", 9, 60, 120, 120));
+    animationController.addAnimation(BossStateEnum.ATTACK | BossStateEnum.PRE_DASH, new CharacterAnimation("src/assets/sprite/boss/boss_predash.png", 3, 120, 120, 120));
+    animationController.addAnimation(BossStateEnum.ATTACK | BossStateEnum.DASH, new CharacterAnimation("src/assets/sprite/boss/boss_dash.png", 1, 60, 120, 120));
 
-  @Override
-  public void start() {
-    animationController.addAnimation(0, new CharacterAnimation("src/assets/sprite/boss/boss_idle.png", 8, 150, 120, 120));
-    animationController.setCurrentAnimation(0);
+
   }
 
   @Override
   public void update() {
+    if(currentState != null) {
+      currentState.update(this);
+    }
     movementController.update(enemy.getPos());
     animationController.update(System.currentTimeMillis());
   }
   
+  @Override
+  public Enemy getEnemy() {
+    return this.enemy;
+  }
+  
+  
+  @Override
+  public void setAnimation(int animationId) {
+    animationController.setCurrentAnimation(animationId);
+    
+  }
+  
+  @Override
+  public int getAnimationCycleCount() {
+    return this.animationController.getCurrentAnimation().getCyclesCompleted();
+  }
+
+  @Override
   public IAnimation getCurrentAnimation() {
     return this.animationController.getCurrentAnimation();
   }
+  
+ @Override
+ public void addForce(double force, int direction) {
+   movementController.addForce(force, direction);
+ }
+ 
+ @Override
+ public int getDirection() {
+   return this.movementController.getDirection();
+ }
+ 
+ public void setDirection(int direction) {
+   this.movementController.setDirection(direction);
+ }
 
-//	@Override
-//	public void update(Player player) {
-//		// TODO Auto-generated method stub
-//		 Position playerPos = player.getPos();
-//	    Position enemyPos = enemy.getPos();
-//	    double speed = 6.0;
-//
-//	    // Horizontal movement toward the player
-//	    if (enemyPos.getX() > playerPos.getX()) {
-//	        enemy.move(-speed, 0); // Move left
-//	    } else if (enemyPos.getX() < playerPos.getX()) {
-//	        enemy.move(speed, 0); // Move right
-//	    }
-//
-//	    // Vertical movement
-//	    if (enemyPos.getY() > playerPos.getY()) {
-//	        enemy.move(0, -speed * 2); // Move up
-//	    } else if (enemyPos.getY() < playerPos.getY() && enemyPos.getY() < 450) {
-//	        enemy.move(0, speed / 1); // Move down
-//	    }
-//	    // Debug
-//	    //System.out.println(enemyPos.getY());
-//	    
-//	 // Calculate the distance between enemy and player
-//	    double distanceX = Math.abs(enemyPos.getX() - playerPos.getX());
-//	    double distanceY = Math.abs(enemyPos.getY() - playerPos.getY());
-//	    double collisionThreshold = 127; // Adjust this value based on your game's scale
-//
-//	    if (distanceX < collisionThreshold && distanceY < collisionThreshold) {
-//	        player.setHealth(player.getHealth() - 1);
-//	    }
-//	    
-//	    animationController.update(System.currentTimeMillis());
-//
-//	}
+  public void changeState(BossState newState) {
+    if(currentState != null) {
+      currentState.exit(this);
+    }
+    currentState = newState;
+    currentState.start(this);
+  }
+  
+  
+
+
 
 }

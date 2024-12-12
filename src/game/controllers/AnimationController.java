@@ -32,7 +32,6 @@ public class AnimationController {
   	return currentAnimation;
   }
     
-  @Deprecated
   public boolean isAnimationCycleCompleted() {
     return currentAnimation != null ? currentAnimation.getCyclesCompleted() > 0 : false;
   }

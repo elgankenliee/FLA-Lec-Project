@@ -1,23 +1,18 @@
 package main;
 
-import java.util.HashSet;
-import java.util.Set;
 
 import game.UIFactory;
-import game.controllers.MovementController;
+
 import game.core.animations.IAnimation;
-import game.core.animations.CharacterAnimation;
-import game.core.constants.PlayerState;
+import game.core.constants.PlayerStateEnum;
+import game.core.constants.Vector;
+import game.core.models.Enemy;
+import game.core.models.Player;
 import game.core.models.Vector2D;
-import game.core.models.entities.Enemy;
-import game.core.models.entities.Player;
 import game.managers.EnemyManager;
 import game.managers.Input;
 import game.managers.PlayerManager;
-import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -28,7 +23,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
@@ -42,7 +36,6 @@ import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class Main extends Application {
 
@@ -66,14 +59,14 @@ public class Main extends Application {
 	private Player player = new Player(
 		1000,
 	  new Vector2D(640, 600),
-		PlayerState.IDLE
+		PlayerStateEnum.IDLE
 	);
 	private PlayerManager playerManager = new PlayerManager(player);
 	private Label playerHealthLabel = UIFactory.makeLabel("Player Health: " + player.getHealth(), 10);
 
 	private Enemy enemy = new Enemy(
     1000,
-    new Vector2D(640, 800)
+    new Vector2D(640, 600)
   );
 	
 	private EnemyManager enemyManager = new EnemyManager(enemy);
@@ -303,8 +296,8 @@ public class Main extends Application {
 	        deltaX * 4, deltaY * 4
 	    );
 
-	    gc.setFill(Color.RED);
-	    gc.fillRect(pos.getX(), pos.getY(), 5, 5);
+//	    gc.setFill(Color.RED);
+//	    gc.fillRect(pos.getX(), pos.getY(), 5, 5);
 	}
     
 	
@@ -322,7 +315,10 @@ public class Main extends Application {
     IAnimation enemyAnimation = enemyManager.getCurrentAnimation();
     
     draw(playerGC, playerAnimation, player.getPos(), playerManager.getDirection());
-    int enemyDirection = (enemy.getPos().getX() > player.getPos().getX()) ? 1 : -1;
+    int enemyDirection = (enemy.getPos().getX() > player.getPos().getX()) ? Vector.RIGHT : Vector.LEFT;
+    
+    enemyManager.setDirection(enemyDirection * -1);
+    
     draw(enemyGC, enemyAnimation, enemy.getPos(), enemyDirection);
     
     parallax();

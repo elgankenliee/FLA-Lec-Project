@@ -9,7 +9,5 @@ public interface IAnimation {
 	public Image getSpriteImage();
 	public int getCropWidth();
 	public int getCropHeight();
-	
-  @Deprecated
 	public int getCyclesCompleted();
 }

@@ -53,18 +53,16 @@ public class CharacterAnimation implements IAnimation{
 
   @Override
   public void start() {
+    this.cyclesCompleted = 0;
   }
   
   @Override
   public void update(long currentTime) {
       if (currentTime - lastFrameTime >= this.frameDuration) {
           currentFrame++;
-//          if(currentFrame >= this.transitionEase) {
-//            cyclesCompleted++;
-//          }
           if (currentFrame >= this.spriteColumns) {
               currentFrame = 0;
-              cyclesCompleted++;
+              ++cyclesCompleted;
           }
           lastFrameTime = currentTime;
       }
@@ -90,7 +88,6 @@ public class CharacterAnimation implements IAnimation{
     return this.cropHeight;
   }
   
-  @Deprecated
   @Override
   public int getCyclesCompleted() {
     return cyclesCompleted;
