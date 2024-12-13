@@ -2,17 +2,17 @@ package game.core.states.boss;
 
 import game.core.constants.BossStateEnum;
 import game.core.constants.Vector;
-import game.core.interfaces.BossContext;
+import game.core.interfaces.CharacterContext;
 
 public class AttackPreDashState implements BossState{
 
   @Override
-  public void start(BossContext context) {
+  public void start(CharacterContext context) {
     context.setAnimation(BossStateEnum.ATTACK | BossStateEnum.PRE_DASH);
   }
 
   @Override
-  public void update(BossContext context) {
+  public void update(CharacterContext context) {
     context.addForce(2 * (context.getDirection() * -1), Vector.X);
     if(context.getAnimationCycleCount() > 0 ) {
       context.changeState(new AttackDashState());
@@ -20,7 +20,7 @@ public class AttackPreDashState implements BossState{
   }
 
   @Override
-  public void exit(BossContext context) {
+  public void exit(CharacterContext context) {
     // TODO Auto-generated method stub
     
   }

@@ -2,8 +2,8 @@ package game.controllers;
 
 import java.util.HashMap;
 
-import game.core.sounds.CharacterAudio;
-import game.core.sounds.IAudio;
+import game.core.audio.CharacterAudio;
+import game.core.audio.IAudio;
 
 public class AudioController {
 	private final HashMap<Integer, CharacterAudio> sounds;

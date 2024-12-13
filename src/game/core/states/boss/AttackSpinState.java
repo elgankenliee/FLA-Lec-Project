@@ -1,30 +1,29 @@
 package game.core.states.boss;
 
+import game.controllers.AttackHandler;
 import game.core.constants.BossStateEnum;
 import game.core.constants.Vector;
-import game.core.interfaces.BossContext;
+import game.core.interfaces.CharacterContext;
 
 public class AttackSpinState implements BossState{
 
-  private int dashed;
   @Override
-  public void start(BossContext context) {
-    this.dashed = 0;
+  public void start(CharacterContext context) {
     context.setAnimation(BossStateEnum.ATTACK | BossStateEnum.SPIN);
   }
 
   @Override
-  public void update(BossContext context) {
-    int cycle = context.getAnimationCycleCount();
-    if((cycle % 4 == 0 || cycle % 7 == 0) && dashed != cycle) {
-      context.addForce(65 * context.getDirection(), Vector.X);
-      dashed = cycle;
+  public void update(CharacterContext context) {
+    
+    AttackHandler.attack(1, 0, 1);
+    
+    if(context.getAnimationCycleCount() > 1) {
+      context.changeState(new IdleDespawnState());
     }
   }
 
   @Override
-  public void exit(BossContext context) {
-    // TODO Auto-generated method stub
+  public void exit(CharacterContext context) {
     
   }
 

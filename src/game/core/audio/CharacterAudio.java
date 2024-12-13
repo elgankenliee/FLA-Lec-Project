@@ -1,4 +1,4 @@
-package game.core.sounds;
+package game.core.audio;
 
 import java.io.File;
 
@@ -18,8 +18,17 @@ public class CharacterAudio implements IAudio {
 		this.audioFile = new File(audioPath);
 		this.audioMedia = new Media(this.audioFile.toURI().toString());
 		this.audioPlayer = new MediaPlayer(audioMedia);
-		audioPlayer.setVolume(0.4);
+		audioPlayer.setVolume(0.2);
 	}
+	
+	 public CharacterAudio(String audioPath, double volume) {
+
+	    this.audioPath = audioPath;
+	    this.audioFile = new File(audioPath);
+	    this.audioMedia = new Media(this.audioFile.toURI().toString());
+	    this.audioPlayer = new MediaPlayer(audioMedia);
+	    audioPlayer.setVolume(volume);
+	  }
 
 	public String getAudioPath() {
 		return audioPath;
