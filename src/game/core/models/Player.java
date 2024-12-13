@@ -7,14 +7,23 @@ public class Player extends Character {
 	private int state;
 	private int stamina;
 
-	public Player(int health, Vector2D pos, int state) {
-		super(health, pos, new Vector2D(60 * 4, 60 * 4));
-		this.health = health;
-		this.pos = pos;
-		this.rb = new RigidBody(new Vector2D(20, 50));
-		this.state = state;
-		this.stamina = 1000;
-		setInvincible(false);
+	public Player(int health, Vector2D pos, int state, int scale) {
+    super(
+      health,
+      pos, 
+      new Vector2D[] {
+          new Vector2D(60, 0), // bottom left
+          new Vector2D(60 * (scale-1), 60 * (scale-1)) // top right
+          },
+      scale
+    );
+   
+    this.health = health;
+    this.pos = pos;
+    this.rb = new RigidBody(new Vector2D(20, 50));
+    this.state = state;
+    this.stamina = 1000;
+    setInvincible(false);
 	}
 
 	@Override

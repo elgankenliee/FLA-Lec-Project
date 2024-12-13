@@ -58,12 +58,12 @@ public class Main extends Application {
 	StackPane playerBarContainer = new StackPane();
 	StackPane entityInfoContainer = new StackPane();
 
-	private Player player = new Player(1000, new Vector2D(640, 600), PlayerStateEnum.IDLE);
+	private Player player = new Player(1000, new Vector2D(640, 600), PlayerStateEnum.IDLE, 4);
 	private PlayerManager playerManager = new PlayerManager(player);
 
 	private Label playerHealthLabel = UIFactory.makeLabel("Player Health: " + player.getHealth(), 10);
 
-	private Enemy enemy = new Enemy(1000, new Vector2D(640, 600));
+	private Enemy enemy = new Enemy(1000, new Vector2D(640, 600), 4);
 
 	private EnemyManager enemyManager = new EnemyManager(enemy);
 
@@ -311,8 +311,8 @@ public class Main extends Application {
 		gc.drawImage(animation.getSpriteImage(), startX, startY, adjustedWidth, deltaY, pos.getX(),
 				pos.getY() - deltaY * 4, deltaX * 4, deltaY * 4);
 
-//	    gc.setFill(Color.RED);
-//	    gc.fillRect(pos.getX(), pos.getY(), deltaX*4, 5);
+	    gc.setFill(Color.RED);
+	    gc.fillRect(pos.getX()+deltaX, pos.getY(), deltaX*3, 5);
 	}
 
 	private void parallax() {

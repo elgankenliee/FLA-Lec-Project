@@ -196,7 +196,7 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 	}
 
 	@Override
-	public Vector2D getHitbox() {
+	public Vector2D[] getHitbox() {
 		return this.player.getHitbox();
 	}
 
@@ -214,5 +214,11 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 	public boolean isInvincible() {
 		return false;
 	}
+
+  @Override
+  public int getScale() {
+    // TODO Auto-generated method stub
+    return player.getScale();
+  }
 
 }

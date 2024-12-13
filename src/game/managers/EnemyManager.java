@@ -134,7 +134,7 @@ public class EnemyManager implements CharacterContext, FXBehaviour {
 	}
 
 	@Override
-	public Vector2D getHitbox() {
+	public Vector2D[] getHitbox() {
 		return this.enemy.getHitbox();
 	}
 
@@ -151,6 +151,12 @@ public class EnemyManager implements CharacterContext, FXBehaviour {
   @Override
   public boolean isInvincible() {
     return enemy.isInvincible();
+  }
+
+  @Override
+  public int getScale() {
+    // TODO Auto-generated method stub
+    return enemy.getScale();
   }
 
 }

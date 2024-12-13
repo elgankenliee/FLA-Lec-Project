@@ -5,16 +5,18 @@ import game.core.physics.RigidBody;
 public abstract class Character {
 	protected int health;
 	protected Vector2D pos;
-	protected Vector2D hitbox;
+	protected Vector2D[] hitbox;
 	protected RigidBody rb;
 	protected boolean invincible;
-
-	protected Character(int health, Vector2D pos, Vector2D hitbox) {
-		this.health = health;
-		this.pos = pos;
-		this.hitbox = hitbox;
-		this.invincible = false;
-	}
+	protected int scale;
+	
+	protected Character(int health, Vector2D pos, Vector2D[] hitbox, int scale) {
+    this.health = health;
+    this.pos = pos;
+    this.hitbox = hitbox;
+    this.invincible = false;
+    this.scale = scale;
+  }
 
 	public void updateHealth(int health) {
 		this.health += health;
@@ -28,7 +30,7 @@ public abstract class Character {
 		this.pos = pos;
 	}
 
-	public Vector2D getHitbox() {
+	public Vector2D[] getHitbox() {
 		return this.hitbox;
 	}
 
@@ -46,6 +48,10 @@ public abstract class Character {
 
 	public boolean isInvincible() {
 		return this.invincible;
+	}
+	
+	public int getScale() {
+	  return this.scale;
 	}
 
 	public abstract void spawn();

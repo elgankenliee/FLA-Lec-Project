@@ -5,8 +5,16 @@ import game.core.physics.RigidBody;
 public class Enemy extends Character{
 	private RigidBody rb;
 	
-	public Enemy(int health, Vector2D pos) {
-	  super(health, pos, new Vector2D(120*4, 120*4));
+	public Enemy(int health, Vector2D pos, int scale) {
+	  super(
+	      health,
+	      pos, 
+	      new Vector2D[] {
+	          new Vector2D(120, 0), // bottom left
+	          new Vector2D(120 * (scale-1), 120 * (scale-1)) // top right
+	          },
+	      scale
+	    );
 		this.rb = new RigidBody(new Vector2D(100, 50));
 		
 	}
