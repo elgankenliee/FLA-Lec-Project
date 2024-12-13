@@ -25,6 +25,7 @@ public class AttackDashState implements BossState {
 
 		if (!hasAttacked) {
 			hasAttacked = AttackHandler.attack(1, 0, 50);
+
 		}
 
 		if (!dashed) {

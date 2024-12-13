@@ -2,11 +2,12 @@ package game.controllers;
 
 import java.util.Random;
 
+import game.camera.PaneObserver;
+import game.core.constants.Vector;
 import game.core.interfaces.CharacterContext;
 import game.managers.GameManager;
 
 public class AttackHandler {
-
 	private static GameManager gm = GameManager.getInstance();
 	private static Random rand = new Random();
 
@@ -31,15 +32,16 @@ public class AttackHandler {
 			target.updateHealth(-damage);
 			gm.playGameSound(rand.nextInt(3));
 
-			// add clash sound
-//      if(target.getDirection() ==  Vector.RIGHT) {
-//        target.addForce(20 * Vector.LEFT, Vector.X);
-//      }
-//      else {
-//        target.addForce(20 * Vector.RIGHT, Vector.X);
-//      }
+			// Notify observers to shake the boss bar container
+			if (targetId == 1)
+				PaneObserver.getInstance().notifyEnemyListeners();
+			else if (targetId == 0) {
+				target.addForce(40 * (attacker.getDirection()), Vector.X);
+				PaneObserver.getInstance().notifyPlayerListeners();
+			}
+
 		}
-		;
+
 		return attacked;
 	}
 }

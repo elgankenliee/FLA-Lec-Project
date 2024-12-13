@@ -1,6 +1,7 @@
 package main;
 
 import game.UIFactory;
+import game.camera.PaneObserver;
 import game.core.animations.IAnimation;
 import game.core.constants.PlayerStateEnum;
 import game.core.constants.Vector;
@@ -54,6 +55,7 @@ public class Main extends Application {
 	private StackPane gameContainer = new StackPane();
 	private Scene gameScene = new Scene(root, 1800, 900);
 	StackPane bossBarContainer = new StackPane();
+	StackPane playerBarContainer = new StackPane();
 	StackPane entityInfoContainer = new StackPane();
 
 	private Player player = new Player(1000, new Vector2D(640, 600), PlayerStateEnum.IDLE);
@@ -189,7 +191,6 @@ public class Main extends Application {
 		playerHealth.getChildren().addAll(playerHealthBar, playerStaminaBar);
 		playerHealth.setPrefWidth(playerHealthBar.getWidth());
 
-		StackPane playerBarContainer = new StackPane();
 		playerBarContainer.getChildren().addAll(playerHealth, playerBarImgView);
 		playerBarContainer.setAlignment(Pos.CENTER_LEFT);
 
@@ -260,6 +261,10 @@ public class Main extends Application {
 
 	// =======
 	private void start() {
+
+		PaneObserver.getInstance().addPlayerListener(playerBarContainer);
+		PaneObserver.getInstance().addEnemyListener(bossBarContainer);
+
 		gameScene.setOnKeyPressed(event -> {
 			input.pressKey(event.getCode());
 

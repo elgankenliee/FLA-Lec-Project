@@ -57,7 +57,7 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 	}
 
 	private void handleStamina() {
-		player.updateStamina(2);
+		player.updateStamina(4);
 
 	}
 
@@ -205,14 +205,14 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 		this.player.updateHealth(delta);
 	}
 
-  @Override
-  public void setIncincible(boolean isInvincible) {
-    
-  }
+	@Override
+	public void setIncincible(boolean isInvincible) {
 
-  @Override
-  public boolean isInvincible() {
-    return false;
-  }
+	}
+
+	@Override
+	public boolean isInvincible() {
+		return false;
+	}
 
 }
