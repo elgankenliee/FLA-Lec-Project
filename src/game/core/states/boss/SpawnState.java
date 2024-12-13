@@ -1,23 +1,23 @@
 package game.core.states.boss;
 
 import game.core.constants.BossStateEnum;
-import game.core.interfaces.BossContext;
+import game.core.interfaces.CharacterContext;
 
 public class SpawnState implements BossState {
 
 	@Override
-	public void start(BossContext context) {
+	public void start(CharacterContext context) {
 		context.setAnimation(BossStateEnum.SPAWN);
 	}
 
 	@Override
-	public void update(BossContext context) {
+	public void update(CharacterContext context) {
 		if (context.getAnimationCycleCount() > 0) {
 			context.changeState(new IdleState());
 		}
 	}
 
 	@Override
-	public void exit(BossContext context) {
+	public void exit(CharacterContext context) {
 	}
 }

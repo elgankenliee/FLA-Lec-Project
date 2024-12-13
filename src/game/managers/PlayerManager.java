@@ -6,19 +6,23 @@ import game.controllers.AudioController;
 import game.controllers.MovementController;
 import game.core.animations.CharacterAnimation;
 import game.core.animations.IAnimation;
+import game.core.audio.CharacterAudio;
+import game.core.audio.IAudio;
 import game.core.constants.PlayerStateEnum;
+import game.core.interfaces.CharacterContext;
 import game.core.interfaces.FXBehaviour;
-import game.core.interfaces.VectorMotion;
 import game.core.models.Player;
-import game.core.sounds.CharacterAudio;
+import game.core.models.Vector2D;
+import game.core.states.boss.BossState;
 import javafx.scene.input.KeyCode;
 
-public class PlayerManager implements VectorMotion, FXBehaviour {
+public class PlayerManager implements CharacterContext, FXBehaviour {
   private final Player player;
   private int stateCache = 1;
   private Input input;
   private final MovementController movementController;
   private final AnimationController animationController;
+  private final AudioController audioController;
   private final int attackDuration; 
   private int attackCd;
   private int attackTimer;
@@ -29,12 +33,26 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
     this.input = Input.getInstance();
     this.movementController = new MovementController(player.getRb());
     this.animationController = new AnimationController();
+    this.audioController = new AudioController();
     this.attackDuration = 12; 
     this.attackCd = 0;
     this.attackTimer = 0;
 
     initializeAnimations();
-		initializeSounds();
+    initializeAudio();
+  }
+  
+  @Override
+  public void start() {
+    
+  }
+
+  @Override
+  public void update() {
+    handleInput();
+    handleMovement();
+    handleAnimation();
+    handleAttack();
   }
   
   private void initializeAnimations() {
@@ -47,29 +65,9 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
     animationController.setCurrentAnimation(PlayerStateEnum.IDLE);
   }
 
-  private void initializeSounds() {
-		audioController.addAudio(PlayerStateEnum.JUMPING, new CharacterAudio("src/assets/audio/sfx/jump.wav"));
-		audioController.addAudio(PlayerStateEnum.ATTACKING, new CharacterAudio("src/assets/audio/sfx/swordswing1.wav"));
-	}
-
-  @Override
-  public void update() {
-    handleInput();
-    handleMovement();
-    handleAnimation();
-    handleAttack();
-  }
- 
-  public void handleAttack() {
-    if (attackTimer > 0) {
-      attackTimer--;
-      if (attackTimer == 0) {
-        player.removeState(PlayerStateEnum.ATTACKING);
-      }
-    } 
-    if(attackCd > 0) {
-      attackCd--;
-    }
+  private void initializeAudio() {
+    audioController.addAudio(PlayerStateEnum.JUMPING, new CharacterAudio("src/assets/audio/sfx/jump.wav"));
+    audioController.addAudio(PlayerStateEnum.ATTACKING, new CharacterAudio("src/assets/audio/sfx/swordswing1.wav"));
   }
 
   @Override
@@ -86,6 +84,18 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
     movementController.update(player.getPos());
   }
   
+  
+  public void handleAttack() {
+    if (attackTimer > 0) {
+      attackTimer--;
+      if (attackTimer == 0) {
+        player.removeState(PlayerStateEnum.ATTACKING);
+      }
+    } 
+    if(attackCd > 0) {
+      attackCd--;
+    }
+  }
 
   private void handleAnimation() {
     animationController.update(System.currentTimeMillis());
@@ -103,7 +113,7 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
         stateCache = currentState;
         animationController.setCurrentAnimation(currentState);
     }
-}
+  }
 
   private void handleInput() {
     if (input.getKey(KeyCode.SPACE)) {
@@ -138,5 +148,50 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
   public IAnimation getCurrentAnimation() {
     return this.animationController.getCurrentAnimation();
   }
+
+  @Override
+  public int getAnimationCycleCount() {
+    return Integer.MIN_VALUE;
+  }
+
+  @Override
+  public void setAnimation(int animationId) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public IAudio getCurrentSound() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public void setSound(int soundId) {
+    // TODO Auto-generated method stub
+  }
+
+  @Override
+  public void changeState(BossState newState) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public Vector2D getPos() {
+    return this.player.getPos();
+  }
+
+  @Override
+  public Vector2D getHitbox() {
+    return this.player.getHitbox();
+  }
+
+  @Override
+  public void updateHealth(int delta) {
+    this.player.updateHealth(delta);
+  }
+
+
 
 }

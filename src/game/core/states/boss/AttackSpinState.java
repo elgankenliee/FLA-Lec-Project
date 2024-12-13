@@ -3,17 +3,17 @@ package game.core.states.boss;
 import game.controllers.AttackHandler;
 import game.core.constants.BossStateEnum;
 import game.core.constants.Vector;
-import game.core.interfaces.BossContext;
+import game.core.interfaces.CharacterContext;
 
 public class AttackSpinState implements BossState{
 
   @Override
-  public void start(BossContext context) {
+  public void start(CharacterContext context) {
     context.setAnimation(BossStateEnum.ATTACK | BossStateEnum.SPIN);
   }
 
   @Override
-  public void update(BossContext context) {
+  public void update(CharacterContext context) {
     
     AttackHandler.attack(1, 0, 1);
     
@@ -23,7 +23,7 @@ public class AttackSpinState implements BossState{
   }
 
   @Override
-  public void exit(BossContext context) {
+  public void exit(CharacterContext context) {
     
   }
 

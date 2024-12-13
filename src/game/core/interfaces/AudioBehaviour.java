@@ -1,6 +1,6 @@
 package game.core.interfaces;
 
-import game.core.sounds.IAudio;
+import game.core.audio.IAudio;
 
 public interface AudioBehaviour {
 	public IAudio getCurrentSound();

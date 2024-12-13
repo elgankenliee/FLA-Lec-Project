@@ -1,9 +1,9 @@
 package game.core.states.boss;
 
-import game.core.interfaces.BossContext;
+import game.core.interfaces.CharacterContext;
 
 public interface BossState {
-  void start(BossContext context);
-  void update(BossContext context);
-  void exit(BossContext context);
+  void start(CharacterContext context);
+  void update(CharacterContext context);
+  void exit(CharacterContext context);
 }

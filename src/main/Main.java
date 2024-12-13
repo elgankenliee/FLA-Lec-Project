@@ -153,128 +153,115 @@ public class Main extends Application {
 	}
 
 	private void setGameScene() {
-		// Set up media player with the video file
-		String bgPath = "../assets/sprite/scene/battleBG.mp4";
-		String enemyHealthBarPath = "./assets/sprite/ui/boss_healthbar.png";
+    // Set up media player with the video file
+    String bgPath = "../assets/sprite/scene/battleBG.mp4";
+    String enemyHealthBarPath = "./assets/sprite/ui/boss_healthbar.png";
 
-		Media media = new Media(getClass().getResource(bgPath).toExternalForm());
-		MediaPlayer mediaPlayer = new MediaPlayer(media);
-		mediaView = new MediaView(mediaPlayer);
+    Media media = new Media(getClass().getResource(bgPath).toExternalForm());
+    MediaPlayer mediaPlayer = new MediaPlayer(media);
+    mediaView = new MediaView(mediaPlayer);
 
-		Image enemyBarImage = new Image(enemyHealthBarPath);
-		enemyBarImgView = new ImageView(enemyBarImage);
+    Image enemyBarImage = new Image(enemyHealthBarPath);
+    enemyBarImgView = new ImageView(enemyBarImage);
 
-		enemyBarImgView.setFitWidth(root.getWidth() * 0.5);
-		enemyBarImgView.setPreserveRatio(true);
+    enemyBarImgView.setFitWidth(root.getWidth() * 0.5);
+    enemyBarImgView.setPreserveRatio(true);
 
-		enemyHealthBarForeground = new Rectangle(enemyBarImgView.getFitWidth() * 0.92, 40, Color.web("#992222"));
+    enemyHealthBarForeground = new Rectangle(enemyBarImgView.getFitWidth() * 0.92, 40, Color.web("#992222"));
 
-
-		bossBarContainer.getChildren().addAll(
-		  enemyHealthBarForeground, 
-	    enemyBarImgView,
-	    enemyHealthLabel
+    bossBarContainer.getChildren().addAll(
+        enemyHealthBarForeground,
+        enemyBarImgView,
+        enemyHealthLabel
     );
+    bossBarContainer.setTranslateY(-280);
 
-//				UIFactory.makeLabel("enemy.getName()", 20), 
-//				UIFactory.makeLabel("Enemy Health: " + enemy.getHealth(), 10));
-		bossBarContainer.setTranslateY(-280);
+    String playerHealthBarPath = "./assets/sprite/ui/player_healthbar.png";
+    Image playerBarImage = new Image(playerHealthBarPath);
 
-		String playerHealthBarPath = "./assets/sprite/ui/player_healthbar.png";
-		Image playerBarImage = new Image(playerHealthBarPath);
-		
-		playerBarImgView = new ImageView(playerBarImage);
-		playerBarImgView.setFitWidth(root.getWidth() * 0.2);
-		playerBarImgView.setPreserveRatio(true);
+    playerBarImgView = new ImageView(playerBarImage);
+    playerBarImgView.setFitWidth(root.getWidth() * 0.2);
+    playerBarImgView.setPreserveRatio(true);
 
-		double barWidth = playerBarImgView.getFitWidth();
-		double barHeight = 24;
+    double barWidth = playerBarImgView.getFitWidth();
+    double barHeight = 24;
 
-		// Create the health bar shapes
-		playerHealthBarForeground = new Rectangle(barWidth, barHeight, Color.GREENYELLOW);
-		playerHealthBarBackground = new Rectangle(barWidth, barHeight, Color.DARKCYAN);
+    // Create the health bar shapes
+    playerHealthBarForeground = new Rectangle(barWidth, barHeight, Color.GREENYELLOW);
+    playerHealthBarBackground = new Rectangle(barWidth, barHeight, Color.DARKCYAN);
 
-		VBox playerHealth = new VBox();
-		playerHealth.getChildren().addAll(playerHealthBarForeground, playerHealthBarBackground);
+    VBox playerHealth = new VBox();
+    playerHealth.getChildren().addAll(playerHealthBarForeground, playerHealthBarBackground);
 
-		StackPane playerBarContainer = new StackPane();
-		playerBarContainer.getChildren().addAll(playerHealth, playerBarImgView);
-		playerBarContainer.setAlignment(Pos.CENTER_LEFT);
+    StackPane playerBarContainer = new StackPane();
+    playerBarContainer.getChildren().addAll(playerHealth, playerBarImgView);
+    playerBarContainer.setAlignment(Pos.CENTER_LEFT);
 
-//		ImageView playerBarImgView = new ImageView(playerBarImage);
-//		playerBarImgView.setFitWidth(root.getWidth() * 0.2);
-//		playerBarImgView.setPreserveRatio(true);
-//
-//		StackPane playerBarContainer = new StackPane();
-//		VBox playerHealth = new VBox();
-//		playerHealth.getChildren().addAll(new Rectangle(playerBarImgView.getFitWidth(), 24, Color.GREENYELLOW),
-//				new Rectangle(playerBarImgView.getFitWidth(), 24, Color.DARKCYAN));
-//		playerBarContainer.getChildren().addAll(playerHealth, playerBarImgView);
-//		playerBarContainer.setAlignment(Pos.CENTER_LEFT);
+    VBox playerInfoContainer = new VBox();
+    VBox topBox = new VBox();
+    topBox.setPrefHeight(root.getHeight() * 0.9);
+    playerInfoContainer.setPrefHeight(root.getHeight() - topBox.getHeight());
+    playerInfoContainer.setTranslateX(100);
+    playerInfoContainer.setPrefWidth(root.getWidth() / 2);
+    playerInfoContainer.getChildren().addAll(topBox, UIFactory.makeLabel("player.getName()", 13),
+            playerBarContainer);
+    VBox playerHealthContainer = new VBox();
+    topBox.setPrefHeight(root.getHeight() * 0.9);
+    playerHealthContainer.setPrefHeight(root.getHeight() - topBox.getHeight());
+    playerHealthContainer.setTranslateX(100);
+    playerHealthContainer.setPrefWidth(root.getWidth() / 2);
+    playerHealthContainer.getChildren().addAll(topBox, playerHealthLabel,
+            playerBarContainer);
 
-		VBox playerInfoContainer = new VBox();
-		VBox topBox = new VBox();
-		topBox.setPrefHeight(root.getHeight() * 0.9);
-		playerInfoContainer.setPrefHeight(root.getHeight() - topBox.getHeight());
-		playerInfoContainer.setTranslateX(100);
-		playerInfoContainer.setPrefWidth(root.getWidth() / 2);
-		playerInfoContainer.getChildren().addAll(topBox, UIFactory.makeLabel("player.getName()", 13),
-				playerBarContainer);
-		VBox playerHealthContainer = new VBox();
-		topBox.setPrefHeight(root.getHeight() * 0.9);
-		playerHealthContainer.setPrefHeight(root.getHeight() - topBox.getHeight());
-		playerHealthContainer.setTranslateX(100);
-		playerHealthContainer.setPrefWidth(root.getWidth() / 2);
-		playerHealthContainer.getChildren().addAll(topBox, playerHealthLabel,
-				playerBarContainer);
+    entityInfoContainer.getChildren().addAll(bossBarContainer, playerInfoContainer, playerHealthContainer);
 
-		entityInfoContainer.getChildren().addAll(bossBarContainer, playerInfoContainer, playerHealthContainer);
+    backgroundMusic.setCycleCount(MediaPlayer.INDEFINITE);
 
-		backgroundMusic.setCycleCount(MediaPlayer.INDEFINITE);
+    // Set the size of the MediaView
+    mediaView.setFitWidth(gameScene.getWidth());
+    mediaView.setFitHeight(gameScene.getHeight());
+    mediaView.setPreserveRatio(true);
+    mediaView.setTranslateY(-50);
 
-		// Set the size of the MediaView
-		mediaView.setFitWidth(gameScene.getWidth());
-		mediaView.setFitHeight(gameScene.getHeight()); // Set to desired height
-		mediaView.setPreserveRatio(true); // Preserve aspect ratio
-		mediaView.setTranslateY(-50);
+    mediaPlayer.setOnError(() -> {
+        System.out.println("Error loading media: " + mediaPlayer.getError().getMessage());
+    });
 
-		mediaPlayer.setOnError(() -> {
-			System.out.println("Error loading media: " + mediaPlayer.getError().getMessage());
-		});
+    mediaPlayer.setOnReady(() -> {
+        mediaPlayer.play();
+    });
 
-		mediaPlayer.setOnReady(() -> {
-			mediaPlayer.play(); // Play the video when it's ready
-		});
+    // Translucent black overlay
+    Rectangle darkOverlay = new Rectangle(gameScene.getWidth(), gameScene.getHeight(), Color.BLACK);
+    darkOverlay.setOpacity(0.3);
 
-		gameScene.setFill(Color.BLACK);
-		bgPane.setPrefWidth(gameContainer.getWidth());
-		bgPane.setPrefHeight(gameContainer.getHeight());
-		bgPane.setAlignment(Pos.CENTER);
+    gameScene.setFill(Color.BLACK);
+    bgPane.setPrefWidth(gameContainer.getWidth());
+    bgPane.setPrefHeight(gameContainer.getHeight());
+    bgPane.setAlignment(Pos.CENTER);
 
-		// Add media view to the gameContainer stack pane
-		gameContainer.setAlignment(Pos.CENTER);
-		gameContainer.getChildren().addAll(mediaView, enemyCanvas, playerCanvas);
-		gameContainer.setPrefWidth(2000);
-		gameContainer.setStyle("-fx-background-color : black;");
+    gameContainer.setAlignment(Pos.CENTER);
+    gameContainer.getChildren().addAll(mediaView, darkOverlay, enemyCanvas, playerCanvas);
+    gameContainer.setPrefWidth(2000);
+    gameContainer.setStyle("-fx-background-color : black;");
 
-		root.getChildren().addAll(gameContainer, entityInfoContainer);
-		root.setStyle("-fx-background-color : black;");
-		root.setPrefHeight(gameContainer.getHeight());
-		root.setPrefWidth(gameContainer.getWidth());
-		root.setAlignment(Pos.CENTER);
-		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Loop the video
+    root.getChildren().addAll(gameContainer, entityInfoContainer);
+    root.setStyle("-fx-background-color : black;");
+    root.setPrefHeight(gameContainer.getHeight());
+    root.setPrefWidth(gameContainer.getWidth());
+    root.setAlignment(Pos.CENTER);
 
-		mediaPlayer.play(); // Start playing the video
-		backgroundMusic.play();
+    mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+    mediaPlayer.play();
+    backgroundMusic.play();
 
-		window.setScene(gameScene);
-		window.setFullScreen(true);
+    window.setScene(gameScene);
+    window.setFullScreen(true);
 
-	  GameManager.getInstance().addEntity(0, player);
-	  GameManager.getInstance().addEntity(1, enemy);
-		start();
-	}
-	
+    GameManager.getInstance().addContext(0, playerManager);
+    GameManager.getInstance().addContext(1, enemyManager);
+    start();
+}
 	
 	// =======
 	private void start() {
@@ -285,6 +272,9 @@ public class Main extends Application {
     gameScene.setOnKeyReleased(event -> {
       input.releaseKey(event.getCode());
     });
+    
+    enemyManager.start();
+    playerManager.start();
     
     AnimationTimer gameLoop = new AnimationTimer() {
         private long lastUpdate = 0;

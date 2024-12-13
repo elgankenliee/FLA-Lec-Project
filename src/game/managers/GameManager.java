@@ -3,16 +3,17 @@ package game.managers;
 import java.util.HashMap;
 import java.util.Map;
 
+import game.core.interfaces.CharacterContext;
 import game.core.models.Character;
 
 public class GameManager {
   
   private static volatile GameManager instance;
   
-  private Map<Integer, Character> entities;
+  private Map<Integer, CharacterContext> contexts;
 
   private GameManager() {
-    entities = new HashMap<>();
+    contexts = new HashMap<>();
   }
 
   public static GameManager getInstance() {
@@ -26,11 +27,11 @@ public class GameManager {
     return instance;
   }
 
-  public void addEntity(Integer id, Character entity) {
-    entities.put(id, entity);
+  public void addContext(Integer id, CharacterContext context) {
+    contexts.put(id, context);
   }
   
-  public Character getEntity(Integer id) {
-    return entities.get(id);
+  public CharacterContext getContext(Integer id) {
+    return contexts.get(id);
   }
 }

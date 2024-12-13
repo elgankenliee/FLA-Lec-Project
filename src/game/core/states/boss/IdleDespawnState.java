@@ -3,7 +3,7 @@ package game.core.states.boss;
 import java.util.Random;
 
 import game.core.constants.BossStateEnum;
-import game.core.interfaces.BossContext;
+import game.core.interfaces.CharacterContext;
 
 public class IdleDespawnState implements BossState {
 
@@ -11,9 +11,9 @@ public class IdleDespawnState implements BossState {
 	private final double minDisplacement = 100f;
 
 	@Override
-	public void start(BossContext context) {
+	public void start(CharacterContext context) {
 		Random rand = new Random();
-		double currentX = context.getEnemy().getPos().getX();
+		double currentX = context.getPos().getX();
 
 		double maxDLeft = currentX - 300 - minDisplacement;
 		double maxDRight = 1300 - currentX - minDisplacement;
@@ -42,14 +42,14 @@ public class IdleDespawnState implements BossState {
 	}
 
 	@Override
-	public void update(BossContext context) {
+	public void update(CharacterContext context) {
 		if (context.getAnimationCycleCount() > 0) {
-			context.getEnemy().getPos().setX(nextSpawnPositionX);
+			context.getPos().setX(nextSpawnPositionX);
 			context.changeState(new SpawnState());
 		}
 	}
 
 	@Override
-	public void exit(BossContext context) {
+	public void exit(CharacterContext context) {
 	}
 }

@@ -1,7 +1,7 @@
 package game.controllers;
 
 import game.core.constants.Vector;
-import game.core.models.Character;
+import game.core.interfaces.CharacterContext;
 import game.managers.GameManager;
 
 public class AttackHandler {
@@ -9,8 +9,8 @@ public class AttackHandler {
   private static GameManager gm = GameManager.getInstance();
   
   public static boolean attack(int attackerId, int targetId, int damage) {
-    Character target = gm.getEntity(targetId);
-    Character attacker = gm.getEntity(attackerId);
+    CharacterContext target = gm.getContext(targetId);
+    CharacterContext attacker = gm.getContext(attackerId);
     
     double targetX = target.getPos().getX();
     double targetY = target.getPos().getY();
@@ -27,17 +27,16 @@ public class AttackHandler {
         (attackerY < targetY + targetHeight) &&
         (attackerY + attackerHeight > targetY);
     
-//    boolean right = targetX > attackerX;
     if(attacked) {
       target.updateHealth(-damage);
-//      if(right) {
-//        target.getPos().setX(targetX + (20 * Vector.RIGHT));
+      // add clash sound
+//      if(target.getDirection() ==  Vector.RIGHT) {
+//        target.addForce(20 * Vector.LEFT, Vector.X);
 //      }
 //      else {
-//        target.getPos().setX(targetX + (20 * Vector.LEFT));
+//        target.addForce(20 * Vector.RIGHT, Vector.X);
 //      }
     };
-    
     return attacked;
   }
 }

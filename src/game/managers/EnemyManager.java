@@ -5,16 +5,17 @@ import game.controllers.AudioController;
 import game.controllers.NPCMovementController;
 import game.core.animations.CharacterAnimation;
 import game.core.animations.IAnimation;
+import game.core.audio.CharacterAudio;
+import game.core.audio.IAudio;
 import game.core.constants.BossStateEnum;
-import game.core.interfaces.BossContext;
+import game.core.interfaces.CharacterContext;
 import game.core.interfaces.FXBehaviour;
 import game.core.models.Enemy;
-import game.core.sounds.CharacterAudio;
-import game.core.sounds.IAudio;
+import game.core.models.Vector2D;
 import game.core.states.boss.BossState;
 import game.core.states.boss.SpawnLevitateState;
 
-public class EnemyManager implements BossContext, FXBehaviour {
+public class EnemyManager implements CharacterContext, FXBehaviour {
 	private Enemy enemy;
 	private NPCMovementController movementController;
 	private AnimationController animationController;
@@ -29,40 +30,13 @@ public class EnemyManager implements BossContext, FXBehaviour {
 		initializeAnimations();
 		initializeAudio();
 		this.currentState = new SpawnLevitateState();
-		currentState.start(this);
 	}
+	
+  @Override
+  public void start() {
+    currentState.start(this);
+  }
 
-	public void initializeAnimations() {
-		animationController.addAnimation(BossStateEnum.SPAWN,
-				new CharacterAnimation("src/assets/sprite/boss/boss_spawn.png", 5, 60, 120, 120));
-		animationController.addAnimation(BossStateEnum.LEVITATE,
-				new CharacterAnimation("src/assets/sprite/boss/boss_levitate.png", 6, 90, 120, 120));
-		animationController.addAnimation(BossStateEnum.SPAWN | BossStateEnum.LEVITATE,
-				new CharacterAnimation("src/assets/sprite/boss/boss_levitate_spawn.png", 5, 60, 120, 120));
-		animationController.addAnimation(BossStateEnum.IDLE,
-				new CharacterAnimation("src/assets/sprite/boss/boss_idle.png", 8, 120, 120, 120));
-		animationController.addAnimation(BossStateEnum.ATTACK | BossStateEnum.SPIN,
-				new CharacterAnimation("src/assets/sprite/boss/boss_spin.png", 9, 60, 120, 120));
-		animationController.addAnimation(BossStateEnum.ATTACK | BossStateEnum.PRE_DASH,
-				new CharacterAnimation("src/assets/sprite/boss/boss_predash.png", 3, 90, 120, 120));
-		animationController.addAnimation(BossStateEnum.ATTACK | BossStateEnum.DASH,
-				new CharacterAnimation("src/assets/sprite/boss/boss_dash.png", 1, 60, 120, 120));
-		animationController.addAnimation(BossStateEnum.IDLE | BossStateEnum.SPLIT_SWORD,
-				new CharacterAnimation("src/assets/sprite/boss/boss_split_sword.png", 6, 30, 120, 120));
-		animationController.addAnimation(BossStateEnum.IDLE | BossStateEnum.DESPAWN,
-				new CharacterAnimation("src/assets/sprite/boss/boss_idle_despawn.png", 6, 30, 120, 120));
-	}
-
-	public void initializeAudio() {
-
-		audioController.addAudio(BossStateEnum.DESPAWN, new CharacterAudio("src/assets/audio/sfx/boss_disappear.wav"));
-		audioController.addAudio(BossStateEnum.ATTACK | BossStateEnum.DASH,
-				new CharacterAudio("src/assets/audio/sfx/boss_dash.wav"));
-		audioController.addAudio(BossStateEnum.SPAWN | BossStateEnum.LEVITATE,
-				new CharacterAudio("src/assets/audio/sfx/boss_reappear.wav"));
-		audioController.addAudio(BossStateEnum.LEVITATE, new CharacterAudio("src/assets/audio/sfx/boss_flame.wav"));
-
-	}
 
 	@Override
 	public void update() {
@@ -72,11 +46,38 @@ public class EnemyManager implements BossContext, FXBehaviour {
 		movementController.update(enemy.getPos());
 		animationController.update(System.currentTimeMillis());
 	}
+	
+	public void initializeAnimations() {
+	    animationController.addAnimation(BossStateEnum.SPAWN,
+	        new CharacterAnimation("src/assets/sprite/boss/boss_spawn.png", 5, 60, 120, 120));
+	    animationController.addAnimation(BossStateEnum.LEVITATE,
+	        new CharacterAnimation("src/assets/sprite/boss/boss_levitate.png", 6, 90, 120, 120));
+	    animationController.addAnimation(BossStateEnum.SPAWN | BossStateEnum.LEVITATE,
+	        new CharacterAnimation("src/assets/sprite/boss/boss_levitate_spawn.png", 5, 60, 120, 120));
+	    animationController.addAnimation(BossStateEnum.IDLE,
+	        new CharacterAnimation("src/assets/sprite/boss/boss_idle.png", 8, 120, 120, 120));
+	    animationController.addAnimation(BossStateEnum.ATTACK | BossStateEnum.SPIN,
+	        new CharacterAnimation("src/assets/sprite/boss/boss_spin.png", 9, 60, 120, 120));
+	    animationController.addAnimation(BossStateEnum.ATTACK | BossStateEnum.PRE_DASH,
+	        new CharacterAnimation("src/assets/sprite/boss/boss_predash.png", 3, 90, 120, 120));
+	    animationController.addAnimation(BossStateEnum.ATTACK | BossStateEnum.DASH,
+	        new CharacterAnimation("src/assets/sprite/boss/boss_dash.png", 1, 60, 120, 120));
+	    animationController.addAnimation(BossStateEnum.IDLE | BossStateEnum.SPLIT_SWORD,
+	        new CharacterAnimation("src/assets/sprite/boss/boss_split_sword.png", 6, 30, 120, 120));
+	    animationController.addAnimation(BossStateEnum.IDLE | BossStateEnum.DESPAWN,
+	        new CharacterAnimation("src/assets/sprite/boss/boss_idle_despawn.png", 6, 30, 120, 120));
+  }
 
-	@Override
-	public Enemy getEnemy() {
-		return this.enemy;
-	}
+  public void initializeAudio() {
+
+    audioController.addAudio(BossStateEnum.DESPAWN, new CharacterAudio("src/assets/audio/sfx/boss_disappear.wav", 0.1f));
+    audioController.addAudio(BossStateEnum.ATTACK | BossStateEnum.DASH,
+        new CharacterAudio("src/assets/audio/sfx/boss_dash.wav"));
+    audioController.addAudio(BossStateEnum.SPAWN | BossStateEnum.LEVITATE,
+        new CharacterAudio("src/assets/audio/sfx/boss_reappear.wav"));
+    audioController.addAudio(BossStateEnum.LEVITATE, new CharacterAudio("src/assets/audio/sfx/boss_flame.wav"));
+
+  }
 
 	@Override
 	public void setAnimation(int animationId) {
@@ -127,5 +128,21 @@ public class EnemyManager implements BossContext, FXBehaviour {
 		this.audioController.setCurrentSound(soundId);
 
 	}
+
+  @Override
+  public Vector2D getPos() {
+    return this.enemy.getPos();
+  }
+
+  @Override
+  public Vector2D getHitbox() {
+    return this.enemy.getHitbox();
+  }
+
+  @Override
+  public void updateHealth(int delta) {
+    this.enemy.updateHealth(delta);
+    
+  }
 
 }

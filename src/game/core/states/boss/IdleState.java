@@ -3,7 +3,7 @@ package game.core.states.boss;
 import java.util.Random;
 
 import game.core.constants.BossStateEnum;
-import game.core.interfaces.BossContext;
+import game.core.interfaces.CharacterContext;
 
 
 public class IdleState implements BossState {
@@ -18,12 +18,12 @@ public class IdleState implements BossState {
   }
 
   @Override
-  public void start(BossContext context) {
+  public void start(CharacterContext context) {
     context.setAnimation(BossStateEnum.IDLE);
   }
 
   @Override
-  public void update(BossContext context) {
+  public void update(CharacterContext context) {
     if(mode == 0) {
       context.changeState(new IdleDespawnState());
     }
@@ -35,6 +35,6 @@ public class IdleState implements BossState {
   }
 
   @Override
-  public void exit(BossContext context) {
+  public void exit(CharacterContext context) {
   }
 }
