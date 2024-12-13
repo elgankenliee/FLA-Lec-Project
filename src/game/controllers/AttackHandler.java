@@ -1,5 +1,6 @@
 package game.controllers;
 
+import game.core.constants.Vector;
 import game.core.models.Character;
 import game.managers.GameManager;
 
@@ -26,7 +27,16 @@ public class AttackHandler {
         (attackerY < targetY + targetHeight) &&
         (attackerY + attackerHeight > targetY);
     
-    if(attacked) target.updateHealth(-damage);
+//    boolean right = targetX > attackerX;
+    if(attacked) {
+      target.updateHealth(-damage);
+//      if(right) {
+//        target.getPos().setX(targetX + (20 * Vector.RIGHT));
+//      }
+//      else {
+//        target.getPos().setX(targetX + (20 * Vector.LEFT));
+//      }
+    };
     
     return attacked;
   }

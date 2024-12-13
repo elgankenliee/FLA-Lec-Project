@@ -102,6 +102,10 @@ public class Main extends Application {
   private Rectangle playerHealthBarForeground;
   private Rectangle playerHealthBarBackground;
   ImageView playerBarImgView;
+  
+  private Rectangle enemyHealthBarForeground;
+  private Rectangle enemyHealthBarBackground;
+  ImageView enemyBarImgView;
 
 	@Override
 	public void start(Stage stage) {
@@ -158,23 +162,16 @@ public class Main extends Application {
 		mediaView = new MediaView(mediaPlayer);
 
 		Image enemyBarImage = new Image(enemyHealthBarPath);
-		ImageView enemyBarImgView = new ImageView(enemyBarImage);
+		enemyBarImgView = new ImageView(enemyBarImage);
 
 		enemyBarImgView.setFitWidth(root.getWidth() * 0.5);
 		enemyBarImgView.setPreserveRatio(true);
 
-		Rectangle bossBarLayer1 = new Rectangle(enemyBarImgView.getFitWidth() * 0.92, 40, Color.web("#992222"));
-		Rectangle bossBarLayer2 = new Rectangle(enemyBarImgView.getFitWidth() * 0.92, 20, Color.web("#b52a2a"));
+		enemyHealthBarForeground = new Rectangle(enemyBarImgView.getFitWidth() * 0.92, 40, Color.web("#992222"));
 
-//		StackPane bossHealthContainer = new StackPane();
-//		bossHealthContainer.setPrefHeight(40);
-//		bossHealthContainer.setPrefWidth(enemyBarImgView.getFitWidth() * 0.92);
-//		bossHealthContainer.getChildren().addAll(bossBarLayer1, bossBarLayer2);
-//		bossHealthContainer.setAlignment(Pos.CENTER_LEFT);
 
 		bossBarContainer.getChildren().addAll(
-	    bossBarLayer1, 
-	    bossBarLayer2, 
+		  enemyHealthBarForeground, 
 	    enemyBarImgView,
 	    enemyHealthLabel
     );

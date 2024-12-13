@@ -19,7 +19,8 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
   private Input input;
   private final MovementController movementController;
   private final AnimationController animationController;
-  private final int attackCd; 
+  private final int attackDuration; 
+  private int attackCd;
   private int attackTimer;
   
 
@@ -28,7 +29,8 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
     this.input = Input.getInstance();
     this.movementController = new MovementController(player.getRb());
     this.animationController = new AnimationController();
-    this.attackCd = 12; 
+    this.attackDuration = 12; 
+    this.attackCd = 0;
     this.attackTimer = 0;
 
     initializeAnimations();
@@ -40,27 +42,28 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
     animationController.addAnimation(PlayerStateEnum.JUMPING, new CharacterAnimation("src/assets/sprite/player/player_jump.png", 4, 200));
     animationController.addAnimation(PlayerStateEnum.FALLING, new CharacterAnimation("src/assets/sprite/player/player_fall.png", 2, 150));
     animationController.addAnimation(PlayerStateEnum.ATTACKING, new CharacterAnimation("src/assets/sprite/player/player_attack_1.png", 8, 23, 80, 60));
-    animationController.addAnimation(PlayerStateEnum.ATTACKING + 1, new CharacterAnimation("src/assets/sprite/player/player_attack_2.png", 8, 23, 80, 60));
+    animationController.addAnimation(PlayerStateEnum.ATTACKING, new CharacterAnimation("src/assets/sprite/player/player_attack_2.png", 8, 23, 80, 60));
     animationController.setCurrentAnimation(PlayerStateEnum.IDLE);
   }
   
   @Override
   public void update() {
-    
-    
     handleInput();
     handleMovement();
     handleAnimation();
-    handleAttackTimer();
+    handleAttack();
   }
  
-  public void handleAttackTimer() {
+  public void handleAttack() {
     if (attackTimer > 0) {
       attackTimer--;
       if (attackTimer == 0) {
         player.removeState(PlayerStateEnum.ATTACKING);
       }
     } 
+    if(attackCd > 0) {
+      attackCd--;
+    }
   }
   @Override
   public void addForce(double force, int direction) {
@@ -81,11 +84,11 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
     animationController.update(System.currentTimeMillis());
 
     if (player.hasState(PlayerStateEnum.ATTACKING)) {
-        if (stateCache != PlayerStateEnum.ATTACKING) {
-            stateCache = PlayerStateEnum.ATTACKING;
-            animationController.setCurrentAnimation(PlayerStateEnum.ATTACKING);
-        }
-        return;
+      if (stateCache != PlayerStateEnum.ATTACKING) {
+        stateCache = PlayerStateEnum.ATTACKING;
+        animationController.setCurrentAnimation(PlayerStateEnum.ATTACKING);
+      }
+      return;
     }
 
     int currentState = player.getState();
@@ -97,10 +100,11 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
 
   private void handleInput() {
     if (input.getKey(KeyCode.SPACE)) {
-      if (attackTimer == 0) {
+      if (attackTimer == 0 && attackCd == 0) {
         player.addState(PlayerStateEnum.ATTACKING);
         AttackHandler.attack(0, 1, 20); // autism but yes
-        attackTimer = attackCd; 
+        attackTimer = attackDuration;
+        attackCd = 30;
         return;
       }
     } 

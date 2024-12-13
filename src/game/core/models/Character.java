@@ -1,9 +1,13 @@
 package game.core.models;
 
+import game.core.physics.RigidBody;
+
 public abstract class Character {
   protected int health;
   protected Vector2D pos;
   protected Vector2D hitbox;
+  protected RigidBody rb;
+
   
   protected Character(int health, Vector2D pos, Vector2D hitbox) {
     this.health = health;

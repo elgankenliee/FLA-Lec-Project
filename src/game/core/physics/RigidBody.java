@@ -2,8 +2,6 @@ package game.core.physics;
 
 import game.core.models.Vector2D;
 
-
-
 public class RigidBody {
 
   private Vector2D velocity;
