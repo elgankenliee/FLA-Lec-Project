@@ -9,12 +9,12 @@ import game.core.interfaces.BossContext;
 public class IdleState implements BossState {
 
   private final int targetCycles;
-  private final boolean mode;
+  private final int mode;
 
   public IdleState() {
     Random rand =  new Random();
     this.targetCycles = rand.nextInt(2); 
-    this.mode = rand.nextBoolean();
+    this.mode = rand.nextInt(2);
   }
 
   @Override
@@ -24,12 +24,13 @@ public class IdleState implements BossState {
 
   @Override
   public void update(BossContext context) {
-    if(mode) {
+    if(mode == 0) {
       context.changeState(new IdleDespawnState());
-      return;
     }
-    if (context.getAnimationCycleCount() >= targetCycles) {
-      context.changeState(new SplitSwordState());
+    else if(mode == 1) {
+      if (context.getAnimationCycleCount() >= targetCycles) {
+        context.changeState(new SplitSwordState());
+      }
     }
   }
 

@@ -2,13 +2,13 @@ package game.core.models;
 
 import game.core.physics.RigidBody;
 
-public class Player implements ICharacter{
-	private int health;
-	private Vector2D pos;
+public class Player extends Character{
+	
 	private RigidBody rb;
 	private int state;
 	
 	public Player(int health, Vector2D pos, int state) {
+	  super(health, pos, new Vector2D(60*4, 60*4));
 		this.health = health;
 		this.pos = pos;
 		this.rb = new RigidBody(new Vector2D(20,50));
@@ -59,15 +59,6 @@ public class Player implements ICharacter{
 		this.state = state;
 	}
 	
-    
-  public int getHealth(){
-    return this.health;
-  }
-    
-	@Override
-	public Vector2D getPos() {
-		return this.pos;
-	}
 	
 	public int getState() {
 		return this.state;

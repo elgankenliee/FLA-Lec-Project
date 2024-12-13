@@ -36,8 +36,6 @@ public class EnemyManager implements BossContext, FXBehaviour {
     animationController.addAnimation(BossStateEnum.ATTACK | BossStateEnum.DASH, new CharacterAnimation("src/assets/sprite/boss/boss_dash.png", 1, 60, 120, 120));
     animationController.addAnimation(BossStateEnum.IDLE | BossStateEnum.SPLIT_SWORD, new CharacterAnimation("src/assets/sprite/boss/boss_split_sword.png", 6, 30, 120, 120));
     animationController.addAnimation(BossStateEnum.IDLE |  BossStateEnum.DESPAWN, new CharacterAnimation("src/assets/sprite/boss/boss_idle_despawn.png", 6, 30, 120, 120));
-
-
   }
 
   @Override

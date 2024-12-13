@@ -3,6 +3,7 @@ package game.managers;
 
 
 import game.controllers.AnimationController;
+import game.controllers.AttackHandler;
 import game.controllers.MovementController;
 import game.core.animations.IAnimation;
 import game.core.animations.CharacterAnimation;
@@ -16,19 +17,22 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
   private final Player player;
   private int stateCache = 1;
   private Input input;
-    
-	private final MovementController movementController;
-	private final AnimationController animationController;
+  private final MovementController movementController;
+  private final AnimationController animationController;
+  private final int attackCd; 
+  private int attackTimer;
+  
 
   public PlayerManager(Player player) {
     this.player = player;
     this.input = Input.getInstance();
     this.movementController = new MovementController(player.getRb());
     this.animationController = new AnimationController();
+    this.attackCd = 12; 
+    this.attackTimer = 0;
 
     initializeAnimations();
   }
-  
   
   private void initializeAnimations() {
     animationController.addAnimation(PlayerStateEnum.IDLE, new CharacterAnimation("src/assets/sprite/player/player_idleedited.png", 4, 150));
@@ -42,11 +46,22 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
   
   @Override
   public void update() {
+    
+    
     handleInput();
     handleMovement();
     handleAnimation();
+    handleAttackTimer();
   }
-  
+ 
+  public void handleAttackTimer() {
+    if (attackTimer > 0) {
+      attackTimer--;
+      if (attackTimer == 0) {
+        player.removeState(PlayerStateEnum.ATTACKING);
+      }
+    } 
+  }
   @Override
   public void addForce(double force, int direction) {
     movementController.addForce(force, direction);
@@ -57,28 +72,40 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
     return movementController.getDirection();
   }
   
-  
   private void handleMovement() {
-    movementController.update(
-      player.getPos()
-    );
+    movementController.update(player.getPos());
   }
   
+
   private void handleAnimation() {
     animationController.update(System.currentTimeMillis());
-    
-    if(player.getState() != stateCache) {
-      stateCache = player.getState();
-      animationController.setCurrentAnimation(player.getState());
+
+    if (player.hasState(PlayerStateEnum.ATTACKING)) {
+        if (stateCache != PlayerStateEnum.ATTACKING) {
+            stateCache = PlayerStateEnum.ATTACKING;
+            animationController.setCurrentAnimation(PlayerStateEnum.ATTACKING);
+        }
+        return;
     }
-    
-  }
+
+    int currentState = player.getState();
+    if (currentState != stateCache) {
+        stateCache = currentState;
+        animationController.setCurrentAnimation(currentState);
+    }
+}
 
   private void handleInput() {
-    player.resetState();
-    
-    if(input.getKey(KeyCode.SPACE)) {
-      player.setState(PlayerStateEnum.ATTACKING);
+    if (input.getKey(KeyCode.SPACE)) {
+      if (attackTimer == 0) {
+        player.addState(PlayerStateEnum.ATTACKING);
+        AttackHandler.attack(0, 1, 20); // autism but yes
+        attackTimer = attackCd; 
+        return;
+      }
+    } 
+
+    if(player.hasState(PlayerStateEnum.ATTACKING)) {
       return;
     }
     
@@ -98,7 +125,7 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
     else if (input.getKey(KeyCode.D)) {
       player.setState(PlayerStateEnum.WALKING);
     }
-    else{
+    else {
       player.setState(PlayerStateEnum.IDLE);
     }
   }
@@ -106,7 +133,4 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
   public IAnimation getCurrentAnimation() {
     return this.animationController.getCurrentAnimation();
   }
-  
-
-
 }
