@@ -1,16 +1,16 @@
 package game.managers;
 
-
-
 import game.controllers.AnimationController;
 import game.controllers.AttackHandler;
+import game.controllers.AudioController;
 import game.controllers.MovementController;
-import game.core.animations.IAnimation;
 import game.core.animations.CharacterAnimation;
+import game.core.animations.IAnimation;
 import game.core.constants.PlayerStateEnum;
-import game.core.interfaces.VectorMotion;
 import game.core.interfaces.FXBehaviour;
+import game.core.interfaces.VectorMotion;
 import game.core.models.Player;
+import game.core.sounds.CharacterAudio;
 import javafx.scene.input.KeyCode;
 
 public class PlayerManager implements VectorMotion, FXBehaviour {
@@ -34,6 +34,7 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
     this.attackTimer = 0;
 
     initializeAnimations();
+		initializeSounds();
   }
   
   private void initializeAnimations() {
@@ -45,7 +46,12 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
     animationController.addAnimation(PlayerStateEnum.ATTACKING, new CharacterAnimation("src/assets/sprite/player/player_attack_2.png", 8, 23, 80, 60));
     animationController.setCurrentAnimation(PlayerStateEnum.IDLE);
   }
-  
+
+  private void initializeSounds() {
+		audioController.addAudio(PlayerStateEnum.JUMPING, new CharacterAudio("src/assets/audio/sfx/jump.wav"));
+		audioController.addAudio(PlayerStateEnum.ATTACKING, new CharacterAudio("src/assets/audio/sfx/swordswing1.wav"));
+	}
+
   @Override
   public void update() {
     handleInput();
@@ -65,6 +71,7 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
       attackCd--;
     }
   }
+
   @Override
   public void addForce(double force, int direction) {
     movementController.addForce(force, direction);
@@ -117,12 +124,6 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
       player.setState(PlayerStateEnum.FALLING);
       return;
     }
-
-    if (input.getKey(KeyCode.W)) {
-      player.setState(PlayerStateEnum.JUMPING);
-      return;
-    }
-
     if (input.getKey(KeyCode.A)) {
       player.setState(PlayerStateEnum.WALKING);
     }
@@ -137,4 +138,5 @@ public class PlayerManager implements VectorMotion, FXBehaviour {
   public IAnimation getCurrentAnimation() {
     return this.animationController.getCurrentAnimation();
   }
+
 }
