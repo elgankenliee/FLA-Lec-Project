@@ -24,6 +24,7 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 	private final AnimationController animationController;
 	private final AudioController audioController;
 	private final int attackDuration;
+	private final int staminaTreshold = 250;
 //	private int attackCd;
 	private int attackTimer;
 
@@ -127,12 +128,12 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 
 	private void handleInput() {
 		if (input.getKey(KeyCode.SPACE)) {
-			if (attackTimer == 0 && player.getStamina() >= 10) {
+			if (attackTimer == 0 && player.getStamina() >= staminaTreshold) {
 				player.addState(PlayerStateEnum.ATTACKING);
 				AttackHandler.attack(0, 1, 20); // autism but yes
 				attackTimer = attackDuration;
 //				attackCd = 30;
-				player.updateStamina(-250);
+				player.updateStamina(-staminaTreshold);
 				return;
 			}
 		}
@@ -203,5 +204,15 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 	public void updateHealth(int delta) {
 		this.player.updateHealth(delta);
 	}
+
+  @Override
+  public void setIncincible(boolean isInvincible) {
+    
+  }
+
+  @Override
+  public boolean isInvincible() {
+    return false;
+  }
 
 }

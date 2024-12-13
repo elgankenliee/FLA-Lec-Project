@@ -141,7 +141,16 @@ public class EnemyManager implements CharacterContext, FXBehaviour {
 	@Override
 	public void updateHealth(int delta) {
 		this.enemy.updateHealth(delta);
-
 	}
+
+  @Override
+  public void setIncincible(boolean isInvincible) {
+    this.enemy.setInvincible(isInvincible);
+  }
+
+  @Override
+  public boolean isInvincible() {
+    return enemy.isInvincible();
+  }
 
 }

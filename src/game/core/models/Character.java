@@ -7,12 +7,15 @@ public abstract class Character {
   protected Vector2D pos;
   protected Vector2D hitbox;
   protected RigidBody rb;
+  protected boolean invincible;
+
 
   
   protected Character(int health, Vector2D pos, Vector2D hitbox) {
     this.health = health;
     this.pos = pos;
     this.hitbox = hitbox;
+    this.invincible = false;
   }
   
   public void updateHealth(int health) {
@@ -37,6 +40,14 @@ public abstract class Character {
 
   public void setHealth(int health) {
     this.health = health;
+  }
+  
+  public void setInvincible(boolean isInvincible) {
+    this.invincible = isInvincible;
+  }
+
+  public boolean isInvincible() {
+    return this.invincible;
   }
   
 	public abstract void spawn();

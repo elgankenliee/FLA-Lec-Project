@@ -16,6 +16,7 @@ public class AttackDashState implements BossState {
 		this.hasAttacked = false;
 		context.setAnimation(BossStateEnum.ATTACK | BossStateEnum.DASH);
 		context.setSound(BossStateEnum.ATTACK | BossStateEnum.DASH);
+		context.setIncincible(false);
 
 	}
 

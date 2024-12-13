@@ -12,6 +12,7 @@ public class IdleDespawnState implements BossState {
 
 	@Override
 	public void start(CharacterContext context) {
+	  context.setIncincible(true);
 		Random rand = new Random();
 		double currentX = context.getPos().getX();
 

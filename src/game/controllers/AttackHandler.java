@@ -27,7 +27,7 @@ public class AttackHandler {
 		boolean attacked = (attackerX < targetX + targetWidth) && (attackerX + attackerWidth > targetX)
 				&& (attackerY < targetY + targetHeight) && (attackerY + attackerHeight > targetY);
 
-		if (attacked) {
+		if (attacked && !target.isInvincible()) {
 			target.updateHealth(-damage);
 			gm.playGameSound(rand.nextInt(3));
 

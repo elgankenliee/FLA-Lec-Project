@@ -8,6 +8,7 @@ public class SpawnState implements BossState {
 	@Override
 	public void start(CharacterContext context) {
 		context.setAnimation(BossStateEnum.SPAWN);
+		context.setIncincible(true);
 	}
 
 	@Override

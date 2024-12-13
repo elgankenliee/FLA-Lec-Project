@@ -10,6 +10,7 @@ public class AttackSpinState implements BossState {
 	public void start(CharacterContext context) {
 		context.setAnimation(BossStateEnum.ATTACK | BossStateEnum.SPIN);
 		context.setSound(BossStateEnum.ATTACK | BossStateEnum.SPIN);
+		context.setIncincible(false);
 	}
 
 	@Override

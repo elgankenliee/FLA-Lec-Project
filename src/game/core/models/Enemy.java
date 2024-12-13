@@ -8,6 +8,7 @@ public class Enemy extends Character{
 	public Enemy(int health, Vector2D pos) {
 	  super(health, pos, new Vector2D(120*4, 120*4));
 		this.rb = new RigidBody(new Vector2D(100, 50));
+		
 	}
 	
 	@Override
@@ -24,7 +25,5 @@ public class Enemy extends Character{
 	public RigidBody getRb() {
 	  return this.rb;
 	}
-	
-
 
 }

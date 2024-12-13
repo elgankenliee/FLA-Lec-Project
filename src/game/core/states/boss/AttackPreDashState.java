@@ -9,6 +9,7 @@ public class AttackPreDashState implements BossState{
   @Override
   public void start(CharacterContext context) {
     context.setAnimation(BossStateEnum.ATTACK | BossStateEnum.PRE_DASH);
+    context.setIncincible(false);
   }
 
   @Override

@@ -14,6 +14,7 @@ public class Player extends Character {
 		this.rb = new RigidBody(new Vector2D(20, 50));
 		this.state = state;
 		this.stamina = 1000;
+		setInvincible(false);
 	}
 
 	@Override

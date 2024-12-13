@@ -8,4 +8,6 @@ public interface CharacterContext extends AnimatedBehaviour, VectorMotion, Audio
 	public Vector2D getPos();
 	public Vector2D getHitbox();
 	public void updateHealth(int delta);
+	public void setIncincible(boolean isInvincible);
+	public boolean isInvincible();
 }
