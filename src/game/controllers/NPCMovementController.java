@@ -17,13 +17,23 @@ public class NPCMovementController extends RigidBodyController {
     // state controlled behaviour
     rb.update(pos);
   }
+
+  @Override
+  public void addForce(double force, int direction) {
+    if(direction ==  Vector.X) {
+      rb.getVelocity().updateX(force);
+    }
+    else if(direction == Vector.Y) {
+      rb.getVelocity().updateY(force);
+    }
+  }
+  
+  @Override
+  public int getDirection() {
+    return this.direction;
+  }
   
   public void setDirection(int direction) {
     this.direction = direction;
   }
-  
-  public int getDirection() {
-    return this.direction;
-  }
-
 }
