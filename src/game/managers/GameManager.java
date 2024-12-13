@@ -3,35 +3,48 @@ package game.managers;
 import java.util.HashMap;
 import java.util.Map;
 
+import game.controllers.AudioController;
+import game.core.audio.Audio;
 import game.core.interfaces.CharacterContext;
-import game.core.models.Character;
 
 public class GameManager {
-  
-  private static volatile GameManager instance;
-  
-  private Map<Integer, CharacterContext> contexts;
 
-  private GameManager() {
-    contexts = new HashMap<>();
-  }
+	private static volatile GameManager instance;
+	private Map<Integer, CharacterContext> contexts;
+	private AudioController audioController;
 
-  public static GameManager getInstance() {
-    if (instance == null) {
-      synchronized (GameManager.class) {
-        if (instance == null) {
-          instance = new GameManager();
-        }
-      }
-    }
-    return instance;
-  }
+	private GameManager() {
+		contexts = new HashMap<>();
+		audioController = new AudioController();
+		initializeGameSounds();
+	}
 
-  public void addContext(Integer id, CharacterContext context) {
-    contexts.put(id, context);
-  }
-  
-  public CharacterContext getContext(Integer id) {
-    return contexts.get(id);
-  }
+	public static GameManager getInstance() {
+		if (instance == null) {
+			synchronized (GameManager.class) {
+				if (instance == null) {
+					instance = new GameManager();
+				}
+			}
+		}
+		return instance;
+	}
+
+	public void initializeGameSounds() {
+		audioController.addAudio(0, new Audio("src/assets/audio/sfx/player_hurt.wav", 0.4));
+		audioController.addAudio(1, new Audio("src/assets/audio/sfx/player_hurt2.wav", 0.4));
+		audioController.addAudio(2, new Audio("src/assets/audio/sfx/player_hurt3.wav", 0.4));
+	}
+
+	public void playGameSound(int soundId) {
+		audioController.setCurrentSound(soundId);
+	}
+
+	public void addContext(Integer id, CharacterContext context) {
+		contexts.put(id, context);
+	}
+
+	public CharacterContext getContext(Integer id) {
+		return contexts.get(id);
+	}
 }

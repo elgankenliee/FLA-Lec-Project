@@ -89,9 +89,9 @@ public class Main extends Application {
 	private MediaPlayer backgroundMusic = new MediaPlayer(bgMusicMedia);
 
 	private final double maxPlayerHealth = 1000;
-
-	private Rectangle playerHealthBarForeground;
-	private Rectangle playerHealthBarBackground;
+	private final double maxPlayerStamina = 1000;
+	private Rectangle playerHealthBar;
+	private Rectangle playerStaminaBar;
 	ImageView playerBarImgView;
 
 	private Rectangle enemyHealthBarForeground;
@@ -182,12 +182,12 @@ public class Main extends Application {
 		double barHeight = 24;
 
 		// Create the health bar shapes
-		playerHealthBarForeground = new Rectangle(barWidth, barHeight, Color.GREENYELLOW);
-		playerHealthBarBackground = new Rectangle(barWidth, barHeight, Color.DARKCYAN);
+		playerHealthBar = new Rectangle(barWidth, barHeight, Color.GREENYELLOW);
+		playerStaminaBar = new Rectangle(barWidth, barHeight, Color.DARKCYAN);
 
 		VBox playerHealth = new VBox();
-		playerHealth.getChildren().addAll(playerHealthBarForeground, playerHealthBarBackground);
-		playerHealth.setPrefWidth(playerHealthBarForeground.getWidth());
+		playerHealth.getChildren().addAll(playerHealthBar, playerStaminaBar);
+		playerHealth.setPrefWidth(playerHealthBar.getWidth());
 
 		StackPane playerBarContainer = new StackPane();
 		playerBarContainer.getChildren().addAll(playerHealth, playerBarImgView);
@@ -339,8 +339,13 @@ public class Main extends Application {
 
 		double currentHealth = player.getHealth() <= 0 ? 0 : player.getHealth();
 		double healthPercent = currentHealth / maxPlayerHealth;
-		double newWidth = playerBarImgView.getFitWidth() * healthPercent;
-		playerHealthBarForeground.setWidth(newWidth);
+		double newHealthWidth = playerBarImgView.getFitWidth() * healthPercent;
+		playerHealthBar.setWidth(newHealthWidth);
+
+		double currentStamina = player.getStamina() <= 0 ? 0 : player.getStamina();
+		double staminaPercent = currentStamina / maxPlayerStamina;
+		double newStaminaWidth = playerBarImgView.getFitWidth() * staminaPercent;
+		playerStaminaBar.setWidth(newStaminaWidth);
 
 		double enemyCurrentHealth = enemy.getHealth() <= 0 ? 0 : enemy.getHealth();
 		double enemyHealthPercent = enemyCurrentHealth / 1000;

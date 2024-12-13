@@ -2,16 +2,18 @@ package game.core.models;
 
 import game.core.physics.RigidBody;
 
-public class Player extends Character{
+public class Player extends Character {
 	private RigidBody rb;
 	private int state;
+	private int stamina;
 
 	public Player(int health, Vector2D pos, int state) {
-	  super(health, pos, new Vector2D(60*4, 60*4));
+		super(health, pos, new Vector2D(60 * 4, 60 * 4));
 		this.health = health;
 		this.pos = pos;
 		this.rb = new RigidBody(new Vector2D(20, 50));
 		this.state = state;
+		this.stamina = 1000;
 	}
 
 	@Override
@@ -57,13 +59,27 @@ public class Player extends Character{
 	public void setState(int state) {
 		this.state = state;
 	}
-	
+
 	public int getState() {
 		return this.state;
 	}
 
 	public RigidBody getRb() {
 		return this.rb;
+	}
+
+	public void updateStamina(int staminaModifier) {
+		if (this.stamina + staminaModifier < 0 || this.stamina + staminaModifier > 1000)
+			return;
+		this.stamina += staminaModifier;
+	}
+
+	public int getStamina() {
+		return stamina;
+	}
+
+	public void setStamina(int stamina) {
+		this.stamina = stamina;
 	}
 
 }

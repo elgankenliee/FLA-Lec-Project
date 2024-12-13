@@ -5,7 +5,7 @@ import game.controllers.AudioController;
 import game.controllers.NPCMovementController;
 import game.core.animations.CharacterAnimation;
 import game.core.animations.IAnimation;
-import game.core.audio.CharacterAudio;
+import game.core.audio.Audio;
 import game.core.audio.IAudio;
 import game.core.constants.BossStateEnum;
 import game.core.interfaces.CharacterContext;
@@ -69,21 +69,19 @@ public class EnemyManager implements CharacterContext, FXBehaviour {
 
 	public void initializeAudio() {
 
-		audioController.addAudio(BossStateEnum.DESPAWN,
-				new CharacterAudio("src/assets/audio/sfx/boss_disappear.wav", 0.1f));
+		audioController.addAudio(BossStateEnum.DESPAWN, new Audio("src/assets/audio/sfx/boss_disappear.wav", 0.1f));
 		audioController.addAudio(BossStateEnum.ATTACK | BossStateEnum.DASH,
-				new CharacterAudio("src/assets/audio/sfx/boss_dash.wav"));
+				new Audio("src/assets/audio/sfx/boss_dash.wav"));
 		audioController.addAudio(BossStateEnum.SPAWN | BossStateEnum.LEVITATE,
-				new CharacterAudio("src/assets/audio/sfx/boss_reappear.wav"));
-		audioController.addAudio(BossStateEnum.LEVITATE, new CharacterAudio("src/assets/audio/sfx/boss_flame.wav"));
+				new Audio("src/assets/audio/sfx/boss_reappear.wav"));
+		audioController.addAudio(BossStateEnum.LEVITATE, new Audio("src/assets/audio/sfx/boss_flame.wav"));
 		audioController.addAudio(BossStateEnum.SPIN | BossStateEnum.ATTACK,
-				new CharacterAudio("src/assets/audio/sfx/boss_spin.wav", 0.6));
+				new Audio("src/assets/audio/sfx/boss_spin.wav", 0.6));
 	}
 
 	@Override
 	public void setAnimation(int animationId) {
 		animationController.setCurrentAnimation(animationId);
-
 	}
 
 	@Override

@@ -5,14 +5,14 @@ import java.io.File;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
-public class CharacterAudio implements IAudio {
+public class Audio implements IAudio {
 
 	private final String audioPath;
 	private final Media audioMedia;
 	private final MediaPlayer audioPlayer;
 	private final File audioFile;
 
-	public CharacterAudio(String audioPath) {
+	public Audio(String audioPath) {
 
 		this.audioPath = audioPath;
 		this.audioFile = new File(audioPath);
@@ -21,7 +21,7 @@ public class CharacterAudio implements IAudio {
 		audioPlayer.setVolume(0.2);
 	}
 	
-	 public CharacterAudio(String audioPath, double volume) {
+	 public Audio(String audioPath, double volume) {
 
 	    this.audioPath = audioPath;
 	    this.audioFile = new File(audioPath);

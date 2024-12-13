@@ -6,7 +6,7 @@ import game.controllers.AudioController;
 import game.controllers.MovementController;
 import game.core.animations.CharacterAnimation;
 import game.core.animations.IAnimation;
-import game.core.audio.CharacterAudio;
+import game.core.audio.Audio;
 import game.core.audio.IAudio;
 import game.core.constants.PlayerStateEnum;
 import game.core.interfaces.CharacterContext;
@@ -24,7 +24,7 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 	private final AnimationController animationController;
 	private final AudioController audioController;
 	private final int attackDuration;
-	private int attackCd;
+//	private int attackCd;
 	private int attackTimer;
 
 	public PlayerManager(Player player) {
@@ -34,7 +34,7 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 		this.animationController = new AnimationController();
 		this.audioController = new AudioController();
 		this.attackDuration = 12;
-		this.attackCd = 0;
+//		this.attackCd = 0;
 		this.attackTimer = 0;
 
 		initializeAnimations();
@@ -52,6 +52,12 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 		handleMovement();
 		handleAnimation();
 		handleAttack();
+		handleStamina();
+	}
+
+	private void handleStamina() {
+		player.updateStamina(2);
+
 	}
 
 	private void initializeAnimations() {
@@ -71,8 +77,8 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 	}
 
 	private void initializeAudio() {
-		audioController.addAudio(PlayerStateEnum.JUMPING, new CharacterAudio("src/assets/audio/sfx/jump.wav"));
-		audioController.addAudio(PlayerStateEnum.ATTACKING, new CharacterAudio("src/assets/audio/sfx/swordswing1.wav"));
+		audioController.addAudio(PlayerStateEnum.JUMPING, new Audio("src/assets/audio/sfx/jump.wav"));
+		audioController.addAudio(PlayerStateEnum.ATTACKING, new Audio("src/assets/audio/sfx/swordswing1.wav"));
 	}
 
 	@Override
@@ -96,9 +102,9 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 				player.removeState(PlayerStateEnum.ATTACKING);
 			}
 		}
-		if (attackCd > 0) {
-			attackCd--;
-		}
+//		if (attackCd > 0) {
+//			attackCd--;
+//		}
 	}
 
 	private void handleAnimation() {
@@ -121,11 +127,12 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 
 	private void handleInput() {
 		if (input.getKey(KeyCode.SPACE)) {
-			if (attackTimer == 0 && attackCd == 0) {
+			if (attackTimer == 0 && player.getStamina() >= 10) {
 				player.addState(PlayerStateEnum.ATTACKING);
 				AttackHandler.attack(0, 1, 20); // autism but yes
 				attackTimer = attackDuration;
-				attackCd = 30;
+//				attackCd = 30;
+				player.updateStamina(-250);
 				return;
 			}
 		}
@@ -133,9 +140,12 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 		if (player.hasState(PlayerStateEnum.ATTACKING)) {
 			return;
 		}
-
 		if (player.getRb().getDelta().getY() > 1) {
 			player.setState(PlayerStateEnum.FALLING);
+			return;
+		}
+		if (input.getKey(KeyCode.W)) {
+			player.setState(PlayerStateEnum.JUMPING);
 			return;
 		}
 		if (input.getKey(KeyCode.A)) {
