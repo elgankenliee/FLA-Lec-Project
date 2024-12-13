@@ -13,7 +13,7 @@ public class Player extends Character {
       pos, 
       new Vector2D[] {
           new Vector2D(60, 0), // bottom left
-          new Vector2D(60 * (scale-1), 60 * (scale-1)) // top right
+          new Vector2D(60 * (scale-1), 60 * (scale)) // top right
           },
       scale
     );

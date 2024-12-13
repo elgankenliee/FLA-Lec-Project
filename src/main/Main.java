@@ -311,8 +311,8 @@ public class Main extends Application {
 		gc.drawImage(animation.getSpriteImage(), startX, startY, adjustedWidth, deltaY, pos.getX(),
 				pos.getY() - deltaY * 4, deltaX * 4, deltaY * 4);
 
-	    gc.setFill(Color.RED);
-	    gc.fillRect(pos.getX()+deltaX, pos.getY(), deltaX*3, 5);
+//	    gc.setFill(Color.RED);
+//	    gc.fillRect(pos.getX()+deltaX, pos.getY(), deltaX*3, 5);
 	}
 
 	private void parallax() {

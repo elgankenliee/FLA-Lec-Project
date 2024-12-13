@@ -11,7 +11,7 @@ public class Enemy extends Character{
 	      pos, 
 	      new Vector2D[] {
 	          new Vector2D(120, 0), // bottom left
-	          new Vector2D(120 * (scale-1), 120 * (scale-1)) // top right
+	          new Vector2D(120 * (scale-1), 120 * (scale)) // top right
 	          },
 	      scale
 	    );
