@@ -4,8 +4,8 @@ import game.core.models.Vector2D;
 
 
 public class PhysicsEngine {
-    private static final Vector2D leftBoundary = new Vector2D(300, 800);
-    private static final Vector2D rightBoundary = new Vector2D(1300, 0);
+    private static final Vector2D leftBoundary = new Vector2D(240, 800);
+    private static final Vector2D rightBoundary = new Vector2D(1340, 0);
     private final double friction;
     private final double gravity;
     private final double marginError;

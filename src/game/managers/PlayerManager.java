@@ -7,12 +7,12 @@ import game.controllers.MovementController;
 import game.core.animations.IAnimation;
 import game.core.animations.CharacterAnimation;
 import game.core.constants.PlayerStateEnum;
-import game.core.interfaces.ContextualMovement;
+import game.core.interfaces.VectorMotion;
 import game.core.interfaces.FXBehaviour;
 import game.core.models.Player;
 import javafx.scene.input.KeyCode;
 
-public class PlayerManager implements FXBehaviour, ContextualMovement {
+public class PlayerManager implements VectorMotion, FXBehaviour {
   private final Player player;
   private int stateCache = 1;
   private Input input;

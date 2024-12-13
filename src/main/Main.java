@@ -233,7 +233,7 @@ public class Main extends Application {
 		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Loop the video
 
 		mediaPlayer.play(); // Start playing the video
-//		backgroundMusic.play();
+		backgroundMusic.play();
 
 		window.setScene(gameScene);
 		window.setFullScreen(true);
@@ -302,9 +302,9 @@ public class Main extends Application {
     
 	
 	private void parallax() {
-    gameContainer.setTranslateX((-player.getPos().getX() * 0.2) + 140);
+    gameContainer.setTranslateX((-player.getPos().getX() * 0.2) + 160);
     entityInfoContainer.setTranslateX(player.getPos().getX() * 0.2 / 10);
-    gameContainer.setTranslateY((-player.getPos().getY() * 0.2) + 130);
+    gameContainer.setTranslateY((-player.getPos().getY() * 0.2) + 140);
 	}
 	
 	private void render() {
