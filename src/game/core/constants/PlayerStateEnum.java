@@ -6,7 +6,7 @@ public class PlayerStateEnum {
   public static final int CROUCHING = 1 << 2;
   public static final int JUMPING = 1 << 3;
   public static final int ATTACKING = 1 << 4;
-  public static final int FALLING = 1 << 6;
+  public static final int FALLING = 1 << 5;
   
 
   public static boolean isInterruptible(int currentState) {

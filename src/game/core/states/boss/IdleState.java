@@ -20,7 +20,7 @@ public class IdleState implements BossState {
   @Override
   public void start(CharacterContext context) {
     context.setAnimation(BossStateEnum.IDLE);
-    context.setIncincible(false);
+    context.setInvincible(false);
   }
 
   @Override

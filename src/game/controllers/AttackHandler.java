@@ -31,17 +31,18 @@ public class AttackHandler {
                        (attackerTopRightY > targetBottomLeftY);
 
     if (attacked && !target.isInvincible()) {
-        target.updateHealth(-damage);
-        gm.playGameSound(rand.nextInt(3));
+      gm.playGameSound(rand.nextInt(3));
+      target.updateHealth(-damage);
+        
 
-        if (targetId == 1) {
-            PaneObserver.getInstance().notifyEnemyListeners();
-        } else if (targetId == 0) {
-            target.addForce(40 * (attacker.getDirection()), Vector.X);
-            PaneObserver.getInstance().notifyPlayerListeners();
-        }
+      if (targetId == 1) {
+          PaneObserver.getInstance().notifyEnemyListeners();
+      } else if (targetId == 0) {
+          target.addForce(60 * (attacker.getDirection()), Vector.X);
+          PaneObserver.getInstance().notifyPlayerListeners();
+      }
     }
 
     return attacked;
-}
+	}
 }

@@ -56,9 +56,9 @@ public class EnemyManager implements CharacterContext, FXBehaviour {
 		animationController.addAnimation(BossStateEnum.IDLE,
 				new CharacterAnimation("src/assets/sprite/boss/boss_idle.png", 8, 120, 120, 120));
 		animationController.addAnimation(BossStateEnum.ATTACK | BossStateEnum.SPIN,
-				new CharacterAnimation("src/assets/sprite/boss/boss_spin.png", 9, 60, 120, 120));
+				new CharacterAnimation("src/assets/sprite/boss/boss_spin.png", 9, 30, 120, 120));
 		animationController.addAnimation(BossStateEnum.ATTACK | BossStateEnum.PRE_DASH,
-				new CharacterAnimation("src/assets/sprite/boss/boss_predash.png", 3, 90, 120, 120));
+				new CharacterAnimation("src/assets/sprite/boss/boss_predash.png", 3, 60, 120, 120));
 		animationController.addAnimation(BossStateEnum.ATTACK | BossStateEnum.DASH,
 				new CharacterAnimation("src/assets/sprite/boss/boss_dash.png", 1, 60, 120, 120));
 		animationController.addAnimation(BossStateEnum.IDLE | BossStateEnum.SPLIT_SWORD,
@@ -144,7 +144,7 @@ public class EnemyManager implements CharacterContext, FXBehaviour {
 	}
 
   @Override
-  public void setIncincible(boolean isInvincible) {
+  public void setInvincible(boolean isInvincible) {
     this.enemy.setInvincible(isInvincible);
   }
 

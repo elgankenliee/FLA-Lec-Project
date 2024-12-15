@@ -10,7 +10,7 @@ public class SpawnLevitateState implements BossState {
 	public void start(CharacterContext context) {
 		context.setAnimation(BossStateEnum.SPAWN | BossStateEnum.LEVITATE);
 		context.setSound(BossStateEnum.SPAWN | BossStateEnum.LEVITATE);
-		context.setIncincible(true);
+		context.setInvincible(true);
 	}
 
 	@Override

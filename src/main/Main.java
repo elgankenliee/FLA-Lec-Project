@@ -40,6 +40,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+  private final boolean DOOM_MODE = true;
 
 	// Canvas and GraphicsContext setup
 	private final Canvas playerCanvas = new Canvas(1800, 900);
@@ -74,22 +75,17 @@ public class Main extends Application {
 	// Background pane setup
 	private StackPane bgPane = new StackPane();
 
-	// Audio paths and MediaPlayer setup
-	private final String swordSlashAudioPath = "../assets/audio/sfx/swordswing1.wav";
-	private Media swordSwingMedia = new Media(getClass().getResource(swordSlashAudioPath).toExternalForm());
-	private MediaPlayer swordSwingAudio = new MediaPlayer(swordSwingMedia);
-
-	private final String walkAudioPath = "../assets/audio/sfx/swordswing1.wav"; // Update if needed
-	private Media walkMedia = new Media(getClass().getResource(walkAudioPath).toExternalForm());
-	private MediaPlayer walkAudio = new MediaPlayer(walkMedia);
 
 	// MediaView setup (for video backgrounds)
 	private MediaView mediaView;
+	MediaPlayer mediaPlayer;
 
-	private String bgMusicPath = "../assets/audio/song/tokyobluesloop.mp3"; // Replace with your file path
+//	private String bgMusicPath = "../assets/audio/song/tokyobluesloop.mp3"; // Replace with your file path
+	private String bgMusicPath = "../assets/audio/song/doom.mp3"; // Replace with your file path
+
 	private Media bgMusicMedia = new Media(getClass().getResource(bgMusicPath).toExternalForm());
 	private MediaPlayer backgroundMusic = new MediaPlayer(bgMusicMedia);
-
+	
 	private final double maxPlayerHealth = 1000;
 	private final double maxPlayerStamina = 1000;
 	private Rectangle playerHealthBar;
@@ -150,7 +146,7 @@ public class Main extends Application {
 		String enemyHealthBarPath = "./assets/sprite/ui/boss_healthbar.png";
 
 		Media media = new Media(getClass().getResource(bgPath).toExternalForm());
-		MediaPlayer mediaPlayer = new MediaPlayer(media);
+		mediaPlayer = new MediaPlayer(media);
 		mediaView = new MediaView(mediaPlayer);
 
 		Image enemyBarImage = new Image(enemyHealthBarPath);
@@ -247,9 +243,6 @@ public class Main extends Application {
 		root.setPrefWidth(gameContainer.getWidth());
 		root.setAlignment(Pos.CENTER);
 
-		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-		mediaPlayer.play();
-		backgroundMusic.play();
 
 		window.setScene(gameScene);
 		window.setFullScreen(true);
@@ -261,8 +254,13 @@ public class Main extends Application {
 
 	// =======
 	private void start() {
+	  mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+	  mediaPlayer.play();
 
+	  backgroundMusic.play();
+	  backgroundMusic.setVolume(0.2);
 		PaneObserver.getInstance().addPlayerListener(playerBarContainer);
+    PaneObserver.getInstance().addPlayerListener(gameContainer);
 		PaneObserver.getInstance().addEnemyListener(bossBarContainer);
 
 		gameScene.setOnKeyPressed(event -> {
@@ -282,8 +280,8 @@ public class Main extends Application {
 			@Override
 			public void handle(long now) {
 				if (lastUpdate == 0 || now - lastUpdate >= 16_666_667) { // ~60 FPS
-					update();
-					render();
+				  update();
+				  render();
 					lastUpdate = now;
 				}
 			}
@@ -316,7 +314,7 @@ public class Main extends Application {
 	}
 
 	private void parallax() {
-		gameContainer.setTranslateX((-player.getPos().getX() * 0.2) + 160);
+//		gameContainer.setTranslateX((-player.getPos().getX() * 0.2) + 160);
 		entityInfoContainer.setTranslateX(player.getPos().getX() * 0.2 / 10);
 		gameContainer.setTranslateY((-player.getPos().getY() * 0.2) + 140);
 	}

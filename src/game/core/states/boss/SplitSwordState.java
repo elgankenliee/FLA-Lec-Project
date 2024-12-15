@@ -8,19 +8,19 @@ import game.core.interfaces.CharacterContext;
 
 public class SplitSwordState implements BossState{
 
-  private int shouldDefendChance;
+  private int shouldSpinAttack;
   @Override
   public void start(CharacterContext context) {
     Random rand = new Random();
-    this.shouldDefendChance = rand.nextInt(5) + 1;
+    this.shouldSpinAttack = rand.nextInt(5);
     context.setAnimation(BossStateEnum.IDLE | BossStateEnum.SPLIT_SWORD);
   }
 
   @Override
   public void update(CharacterContext context) {
     
-    if(context.getAnimationCycleCount() > 0) {   
-      if(shouldDefendChance < 2) context.changeState(new AttackSpinState());
+    if(context.getAnimationCycleCount() > 0) { 
+      if(shouldSpinAttack < 1) context.changeState(new AttackSpinState());
       else context.changeState(new AttackPreDashState());
     }
     

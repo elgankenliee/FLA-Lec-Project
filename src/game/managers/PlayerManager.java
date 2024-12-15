@@ -57,7 +57,7 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 	}
 
 	private void handleStamina() {
-		player.updateStamina(4);
+		player.updateStamina(5);
 
 	}
 
@@ -65,15 +65,17 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 		animationController.addAnimation(PlayerStateEnum.IDLE,
 				new CharacterAnimation("src/assets/sprite/player/player_idleedited.png", 4, 150));
 		animationController.addAnimation(PlayerStateEnum.WALKING,
-				new CharacterAnimation("src/assets/sprite/player/player_walk.png", 8, 45));
+				new CharacterAnimation("src/assets/sprite/player/player_walk.png", 8, 40));
 		animationController.addAnimation(PlayerStateEnum.JUMPING,
 				new CharacterAnimation("src/assets/sprite/player/player_jump.png", 4, 200));
+		animationController.addAnimation(PlayerStateEnum.JUMPING | PlayerStateEnum.WALKING,
+        new CharacterAnimation("src/assets/sprite/player/player_jump.png", 4, 200));
 		animationController.addAnimation(PlayerStateEnum.FALLING,
 				new CharacterAnimation("src/assets/sprite/player/player_fall.png", 2, 150));
 		animationController.addAnimation(PlayerStateEnum.ATTACKING,
-				new CharacterAnimation("src/assets/sprite/player/player_attack_1.png", 8, 23, 80, 60));
-		animationController.addAnimation(PlayerStateEnum.ATTACKING,
-				new CharacterAnimation("src/assets/sprite/player/player_attack_2.png", 8, 23, 80, 60));
+				new CharacterAnimation("src/assets/sprite/player/player_attack_2.png", 8, 23, 80, 60));	
+		animationController.addAnimation(PlayerStateEnum.ATTACKING | PlayerStateEnum.JUMPING,
+        new CharacterAnimation("src/assets/sprite/player/player_attack_airborne.png", 8, 23, 80, 60));
 		animationController.setCurrentAnimation(PlayerStateEnum.IDLE);
 	}
 
@@ -145,10 +147,15 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 			player.setState(PlayerStateEnum.FALLING);
 			return;
 		}
-		if (input.getKey(KeyCode.W)) {
-			player.setState(PlayerStateEnum.JUMPING);
+		
+		if (input.getKey(KeyCode.W) && !player.hasState(PlayerStateEnum.FALLING)) {
+			player.addState(PlayerStateEnum.JUMPING);
 			return;
 		}
+		else {
+		  player.removeState(PlayerStateEnum.JUMPING);
+		}
+		
 		if (input.getKey(KeyCode.A)) {
 			player.setState(PlayerStateEnum.WALKING);
 		} else if (input.getKey(KeyCode.D)) {
@@ -206,7 +213,7 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 	}
 
 	@Override
-	public void setIncincible(boolean isInvincible) {
+	public void setInvincible(boolean isInvincible) {
 
 	}
 

@@ -10,7 +10,7 @@ public class LevitateState implements BossState {
 	public void start(CharacterContext context) {
 		context.setAnimation(BossStateEnum.LEVITATE);
 		context.setSound(BossStateEnum.LEVITATE);
-		context.setIncincible(false);
+		context.setInvincible(false);
 	}
 
 	@Override

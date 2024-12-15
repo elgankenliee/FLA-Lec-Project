@@ -31,9 +31,9 @@ public class GameManager {
 	}
 
 	public void initializeGameSounds() {
-		audioController.addAudio(0, new Audio("src/assets/audio/sfx/player_hurt.wav", 0.4));
-		audioController.addAudio(1, new Audio("src/assets/audio/sfx/player_hurt2.wav", 0.4));
-		audioController.addAudio(2, new Audio("src/assets/audio/sfx/player_hurt3.wav", 0.4));
+		audioController.addAudio(0, new Audio("src/assets/audio/sfx/player_hurt.wav"));
+		audioController.addAudio(1, new Audio("src/assets/audio/sfx/player_hurt2.wav"));
+		audioController.addAudio(2, new Audio("src/assets/audio/sfx/player_hurt3.wav"));
 	}
 
 	public void playGameSound(int soundId) {
