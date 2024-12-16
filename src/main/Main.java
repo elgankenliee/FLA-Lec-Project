@@ -1,5 +1,7 @@
 package main;
 
+import java.io.File;
+
 import game.UIFactory;
 import game.camera.PaneObserver;
 import game.core.animations.IAnimation;
@@ -40,7 +42,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class Main extends Application {
-  private final boolean DOOM_MODE = true;
+	private final boolean DOOM_MODE = true;
 
 	// Canvas and GraphicsContext setup
 	private final Canvas playerCanvas = new Canvas(1800, 900);
@@ -54,6 +56,7 @@ public class Main extends Application {
 	private Scene mainMenu;
 	private StackPane root = new StackPane();
 	private StackPane gameContainer = new StackPane();
+	StackPane camera = new StackPane();
 	private Scene gameScene = new Scene(root, 1800, 900);
 	StackPane bossBarContainer = new StackPane();
 	StackPane playerBarContainer = new StackPane();
@@ -75,17 +78,19 @@ public class Main extends Application {
 	// Background pane setup
 	private StackPane bgPane = new StackPane();
 
-
 	// MediaView setup (for video backgrounds)
 	private MediaView mediaView;
 	MediaPlayer mediaPlayer;
 
-//	private String bgMusicPath = "../assets/audio/song/tokyobluesloop.mp3"; // Replace with your file path
-	private String bgMusicPath = "../assets/audio/song/doom.mp3"; // Replace with your file path
+	Image bloodImage = new Image("./assets/sprite/ui/BloodOverlay.png");
+	ImageView overlayView = new ImageView(bloodImage);
+
+	private String bgMusicPath = "../assets/audio/song/tokyobluesloop.mp3"; // Replace with your file path
+//	private String bgMusicPath = "../assets/audio/song/doom.mp3"; // Replace with your file path
 
 	private Media bgMusicMedia = new Media(getClass().getResource(bgMusicPath).toExternalForm());
 	private MediaPlayer backgroundMusic = new MediaPlayer(bgMusicMedia);
-	
+
 	private final double maxPlayerHealth = 1000;
 	private final double maxPlayerStamina = 1000;
 	private Rectangle playerHealthBar;
@@ -142,10 +147,11 @@ public class Main extends Application {
 
 	private void setGameScene() {
 		// Set up media player with the video file
-		String bgPath = "../assets/sprite/scene/battleBG.mp4";
+		String bgPath = "src/assets/sprite/scene/battleBG.mp4";
 		String enemyHealthBarPath = "./assets/sprite/ui/boss_healthbar.png";
 
-		Media media = new Media(getClass().getResource(bgPath).toExternalForm());
+		File bgFile = new File(bgPath);
+		Media media = new Media(bgFile.toURI().toString());
 		mediaPlayer = new MediaPlayer(media);
 		mediaView = new MediaView(mediaPlayer);
 
@@ -161,8 +167,8 @@ public class Main extends Application {
 		StackPane bossHealthContainer = new StackPane();
 		bossHealthContainer.setMaxHeight(40);
 		bossHealthContainer.setMaxWidth(enemyBarImgView.getFitWidth() * 0.92);
-		bossHealthContainer
-				.setBackground(new Background(new BackgroundFill(Color.DARKGRAY, new CornerRadii(0), new Insets(0))));
+		bossHealthContainer.setBackground(
+				new Background(new BackgroundFill(Color.web("#361b19"), new CornerRadii(0), new Insets(0))));
 		bossHealthContainer.getChildren().addAll(enemyHealthBarForeground, enemyHealthBarBackground);
 		bossHealthContainer.setAlignment(Pos.CENTER_LEFT);
 
@@ -232,17 +238,21 @@ public class Main extends Application {
 		bgPane.setPrefHeight(gameContainer.getHeight());
 		bgPane.setAlignment(Pos.CENTER);
 
+		overlayView.setPreserveRatio(true);
+		overlayView.setFitWidth(2400);
+
+		camera.getChildren().add(gameContainer);
 		gameContainer.setAlignment(Pos.CENTER);
 		gameContainer.getChildren().addAll(mediaView, darkOverlay, enemyCanvas, playerCanvas);
 		gameContainer.setPrefWidth(2000);
 		gameContainer.setStyle("-fx-background-color : black;");
 
-		root.getChildren().addAll(gameContainer, entityInfoContainer);
+		overlayView.setOpacity(0);
+		root.getChildren().addAll(camera, overlayView, entityInfoContainer);
 		root.setStyle("-fx-background-color : black;");
 		root.setPrefHeight(gameContainer.getHeight());
 		root.setPrefWidth(gameContainer.getWidth());
 		root.setAlignment(Pos.CENTER);
-
 
 		window.setScene(gameScene);
 		window.setFullScreen(true);
@@ -252,16 +262,16 @@ public class Main extends Application {
 		start();
 	}
 
-	// =======
 	private void start() {
-	  mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-	  mediaPlayer.play();
+		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+		mediaPlayer.play();
 
-	  backgroundMusic.play();
-	  backgroundMusic.setVolume(0.2);
+		backgroundMusic.play();
+		backgroundMusic.setVolume(1);
 		PaneObserver.getInstance().addPlayerListener(playerBarContainer);
-    PaneObserver.getInstance().addPlayerListener(gameContainer);
+		PaneObserver.getInstance().addPlayerListener(gameContainer);
 		PaneObserver.getInstance().addEnemyListener(bossBarContainer);
+		PaneObserver.getInstance().addFXListener(overlayView);
 
 		gameScene.setOnKeyPressed(event -> {
 			input.pressKey(event.getCode());
@@ -280,8 +290,8 @@ public class Main extends Application {
 			@Override
 			public void handle(long now) {
 				if (lastUpdate == 0 || now - lastUpdate >= 16_666_667) { // ~60 FPS
-				  update();
-				  render();
+					update();
+					render();
 					lastUpdate = now;
 				}
 			}
@@ -314,9 +324,9 @@ public class Main extends Application {
 	}
 
 	private void parallax() {
-//		gameContainer.setTranslateX((-player.getPos().getX() * 0.2) + 160);
+		camera.setTranslateX((-player.getPos().getX() * 0.2) + 160);
 		entityInfoContainer.setTranslateX(player.getPos().getX() * 0.2 / 10);
-		gameContainer.setTranslateY((-player.getPos().getY() * 0.2) + 140);
+		camera.setTranslateY((-player.getPos().getY() * 0.2) + 140);
 	}
 
 	private void render() {

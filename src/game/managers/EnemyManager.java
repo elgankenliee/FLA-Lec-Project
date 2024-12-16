@@ -143,20 +143,25 @@ public class EnemyManager implements CharacterContext, FXBehaviour {
 		this.enemy.updateHealth(delta);
 	}
 
-  @Override
-  public void setInvincible(boolean isInvincible) {
-    this.enemy.setInvincible(isInvincible);
-  }
+	@Override
+	public void setInvincible(boolean isInvincible) {
+		this.enemy.setInvincible(isInvincible);
+	}
 
-  @Override
-  public boolean isInvincible() {
-    return enemy.isInvincible();
-  }
+	@Override
+	public boolean isInvincible() {
+		return enemy.isInvincible();
+	}
 
-  @Override
-  public int getScale() {
-    // TODO Auto-generated method stub
-    return enemy.getScale();
-  }
+	@Override
+	public int getState() {
+		return Integer.MIN_VALUE;
+	}
+
+	@Override
+	public int getScale() {
+		// TODO Auto-generated method stub
+		return enemy.getScale();
+	}
 
 }
