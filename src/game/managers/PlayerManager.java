@@ -54,11 +54,19 @@ public class PlayerManager implements CharacterContext, FXBehaviour {
 		handleAnimation();
 		handleAttack();
 		handleStamina();
+		handleHealth();
 	}
 
 	private void handleStamina() {
 
 		player.updateStamina(5);
+
+	}
+
+	private void handleHealth() {
+
+		if (player.getHealth() <= 0)
+			System.exit(0);
 
 	}
 
